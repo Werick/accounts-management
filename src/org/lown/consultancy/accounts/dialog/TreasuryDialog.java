@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.api.CashService;
 import org.lown.consultancy.accounts.api.CompanyService;
 
@@ -224,7 +225,7 @@ public class TreasuryDialog extends JPanel implements ActionListener{
             {
                 txt_availableAmount.setText("");
                 cs=new CashService();
-                availBalance=cs.getAvailableCash();
+                availBalance=cs.getAvailableCashCollection();
                 txt_availableAmount.setText(df.format(availBalance));
                 
                
@@ -233,7 +234,7 @@ public class TreasuryDialog extends JPanel implements ActionListener{
             {
                 txt_availableAmount.setText("");
                 cs=new CashService();
-                availBalance=cs.getAvailableBank();
+                availBalance=cs.getAvailableBankCollection();
                 txt_availableAmount.setText(df.format(availBalance));
                 
 //                System.out.println(cbo_payMode.getSelectedItem().toString());
@@ -253,12 +254,24 @@ public class TreasuryDialog extends JPanel implements ActionListener{
                 txt_availableAmount.setText("");
                 cs=new CashService();
                 availBalance=cs.getAvailableMobileMoney();
-                txt_availableAmount.setText(df.format(availBalance));
-                
-               
+                txt_availableAmount.setText(df.format(availBalance));              
             }
-           
+             else if (cbo_source.getSelectedIndex()>3)
+             {
+                 //check the indivual accounts using the accounts map
+                 
+             }          
 	}
+        else if(e.getActionCommand().equals(ACT_TRANSFER))
+        {
+            //get the source account details
+            Cash source=new Cash();
+            source.setTxType("CR");
+            source.setTxCode(7); //withdraw cash from account
+            
+            source.setAccount(ACT_BANK);
+            //Get the destination account details
+        }
         
     }
     
