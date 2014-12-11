@@ -419,7 +419,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
             {
                 txt_availBalance.setText("");
                 cs=new CashService();
-                availBalance=cs.getAvailableCash();
+                availBalance=cs.getAvailableCashCollection();
                 txt_availBalance.setText(df.format(availBalance));
                 cbo_bank_mobile.removeAllItems();
                 cbo_bank_mobile.setEnabled(false);

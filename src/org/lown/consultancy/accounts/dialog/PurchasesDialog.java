@@ -71,6 +71,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
     private JLabel lbl_supplierName;
     private JLabel lbl_address;
     private JLabel lbl_txQty;
+    private JLabel lbl_curPrice;
     private JLabel lbl_txCategory;
     private JLabel lbl_txDes;
     private JLabel lbl_txVat;
@@ -79,10 +80,10 @@ public class PurchasesDialog extends JPanel implements ActionListener{
     private JLabel lbl_days; 
     private JLabel lbl_txQtyAvailable;
     
-    private JTextField txt_txNetAmount;
-    private JTextField txt_txVat;
+    private JTextField txt_txNetAmount;    
     private JTextField txt_txQtyAvailable;    
     private JTextField txt_txQty;
+    private JTextField txt_curPrice;
     private JTextField txt_txNumber;    
     private JTextField txt_invoiceNetTotal;
     private JTextField txt_days;
@@ -368,29 +369,83 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         txt_txQtyAvailable.setHorizontalAlignment(JTextField.RIGHT);
         pPurchaseItems.add(txt_txQtyAvailable);
         
+        lbl_curPrice=new JLabel();
+        lbl_curPrice.setBounds(500, 25, 80, 25);         
+        lbl_curPrice.setText("Buy Price:");
+        pPurchaseItems.add(lbl_curPrice);
+        
+        txt_curPrice=new JTextField();
+        txt_curPrice.setBounds(500, 50, 80, 25);         
+        txt_curPrice.setText("");        
+        txt_curPrice.setHorizontalAlignment(JTextField.RIGHT);
+        pPurchaseItems.add(txt_curPrice);
+         /*
+         * Add a document Listener method to track changes in the text box and calls a calculate method
+         */
+        txt_curPrice.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) 
+            {
+                calculatePrice();
+            }
+            
+            @Override
+            public void removeUpdate(DocumentEvent e) 
+            {
+                calculatePrice();
+            }
+            
+            @Override
+            public void insertUpdate(DocumentEvent e) 
+            {
+                calculatePrice();
+            }
+            
+            public void calculatePrice() 
+            {
+                double dblQty=0.0;
+                double dblPrice=0.0;
+                if (txt_curPrice.getText().length()>0)
+                {                   
+                    
+                    dblQty=0.0;
+                    double buyprice;
+                    if(isNumeric(txt_curPrice.getText())&& (isNumeric(txt_txQty.getText())) )
+                    {
+                        dblQty=Double.parseDouble(txt_txQty.getText());                        
+                        buyprice=Double.parseDouble(txt_curPrice.getText());
+                        dblPrice=dblQty*buyprice;
+                    }                    
+                    txt_txNetAmount.setText(df.format(dblPrice));                           
+                }
+                else
+                {
+                    txt_txNetAmount.setText("");
+                }
+            }
+           
+        });
+        
+        
         lbl_txNetAmount=new JLabel();
-        lbl_txNetAmount.setBounds(500, 25, 150, 25);         
+        lbl_txNetAmount.setBounds(600, 25, 150, 25);         
         lbl_txNetAmount.setText("Price Inclusive:");
         pPurchaseItems.add(lbl_txNetAmount);
         
         txt_txNetAmount=new JTextField();
-        txt_txNetAmount.setBounds(500, 50, 120, 25);         
+        txt_txNetAmount.setBounds(600, 50, 120, 25);         
         txt_txNetAmount.setText("");
+        txt_txNetAmount.setEditable(false);
         txt_txNetAmount.setHorizontalAlignment(JTextField.RIGHT);
         pPurchaseItems.add(txt_txNetAmount);
         
         lbl_txVat=new JLabel();
-        lbl_txVat.setBounds(650, 25, 100, 25);         
+        lbl_txVat.setBounds(750, 25, 100, 25);         
         lbl_txVat.setText("VAT:");
         pPurchaseItems.add(lbl_txVat);
         
-        txt_txVat=new JTextField();
-        txt_txVat.setBounds(650, 50, 120, 25);         
-        txt_txVat.setText("");
-        //pPurchaseItems.add(txt_txVat);
-        
         chk_txVat=new JCheckBox(MainMenu.companyDetails.get("company.vat").toString()+" %");
-        chk_txVat.setBounds(650, 50, 120, 25);
+        chk_txVat.setBounds(750, 50, 120, 25);
         chk_txVat.setEnabled(false);
         chk_txVat.addItemListener(new ItemListener() {
 
@@ -512,8 +567,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
                 //reset the controls
                 //cbo_product.setSelectedItem("Select Product");
             cbo_productCategory.setSelectedItem("Select");
-            txt_txQty.setText("");
-            txt_txVat.setText("");
+            txt_txQty.setText("");            
             txt_txNetAmount.setText("");
             chk_txVat.setSelected(false);
                
@@ -532,7 +586,9 @@ public class PurchasesDialog extends JPanel implements ActionListener{
             {
                 int selProduct=productList.get(cbo_product.getSelectedItem());
                 dblqty=purchasesService.getAvailableQuantity(selProduct);
+                double buyprice=productService.getProductBuyingPrice(selProduct);
                 txt_txQtyAvailable.setText(df.format(dblqty));
+                txt_curPrice.setText(df.format(buyprice));
                 chk_txVat.setSelected(purchasesService.hasVAT(selProduct));
             }
             catch(Exception ex)
@@ -552,8 +608,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
                 //reset the controls
                 //cbo_product.setSelectedItem("Select Product");
                 cbo_productCategory.setSelectedItem("Select");
-                txt_txQty.setText("");
-                txt_txVat.setText("");
+                txt_txQty.setText("");                
                 txt_txNetAmount.setText("");
                 chk_txVat.setSelected(false);
                
@@ -631,6 +686,12 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         }
         else if(e.getActionCommand().equals(ACT_ADD))
         {
+            if(cbo_product.getSelectedItem().equals("Select Product"))
+            {
+                 JOptionPane.showMessageDialog(null, "No Product is Selected...");
+                 return;
+            }
+            
             if(txt_txQty.getText().equalsIgnoreCase(""))
             {
                  JOptionPane.showMessageDialog(null, "Purchased Quantity Missing...");
@@ -675,10 +736,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         {
             vatRate=Double.parseDouble(MainMenu.companyDetails.get("company.vat").toString());
         }
-//            if(!txt_txVat.getText().isEmpty()&& isNumeric(txt_txVat.getText()) )
-//            {
-//                vat=Double.parseDouble(txt_txVat.getText());
-//            }
+
 
         double netAmount=0.0;
         if(!txt_txNetAmount.getText().isEmpty()&& isNumeric(txt_txNetAmount.getText()) )
@@ -715,8 +773,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
          //reset the controls
         //cbo_product.setSelectedItem("Select Product");
         cbo_productCategory.setSelectedItem("Select");
-        txt_txQty.setText("");
-        txt_txVat.setText("");
+        txt_txQty.setText("");        
         txt_txNetAmount.setText("");
         chk_txVat.setSelected(false);
      }

@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -23,10 +25,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import org.jdesktop.swingx.JXDatePicker;
+import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.SalesTransaction;
+import org.lown.consultancy.accounts.api.CompanyService;
 import org.lown.consultancy.accounts.api.SalesService;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.InvoiceList;
@@ -86,8 +90,9 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
     private JTextField txt_payAmount;
     
     
-    private String payOptions[]={"Select","Cash","Mobile Money","Cheque","Other"};
+    private String payOptions[]={"Select","Cash","Mobile Money","Cheque","Direct Transfer"};
     private JComboBox cbo_payMode;
+    private JComboBox cbo_accounts;
     
     private InvoiceList invoiceList;
     private DecimalFormat df = new DecimalFormat("#0.00");
@@ -97,9 +102,20 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
     private double totalPrePaymentBF=0.0;
     private double totalPrePaymentCF=0.0;
     private SalesService ss;
+    private CompanyService companyService;
+    private List<Account> accountList;
+    private static Map<String, Integer> accountMap;
     
     public ReceivePaymentDialog()
     {
+        
+        accountMap=new HashMap<String,Integer>();
+        accountList=new ArrayList<Account>();
+        
+        companyService=new CompanyService();
+        accountList=companyService.getAllAccounts();
+        
+        
         dlgReceivePayment= new JDialog((JDialog)null, "Receive Customer Payment", true);
         dlgReceivePayment.setLayout(null);
         dlgReceivePayment.setSize(850, 600);//Width size, Height size
@@ -211,6 +227,24 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
         txt_chequeNumber.setFont(title2Font);
         txt_chequeNumber.setEditable(false);
         pPayments.add(txt_chequeNumber);
+        
+        cbo_accounts=new JComboBox();
+        cbo_accounts.setBounds(150, 80, 200, 25);     
+        cbo_accounts.setFont(title2Font);
+        //cbo_accounts.setEditable(false);
+        cbo_accounts.setVisible(false);
+        pPayments.add(cbo_accounts);
+        
+        for (Account acc:accountList)
+        {
+            if(acc.getBank_name().equalsIgnoreCase("Cash")) //skip cash account
+            {
+                continue;
+            }
+            cbo_accounts.addItem(acc.getAccount_name()+" - "+ acc.getBank_name()+" - "+acc.getBranch());
+            String accName=acc.getAccount_name()+" - "+ acc.getBank_name()+" - "+acc.getBranch();// this combination my require some change in future
+            accountMap.put(accName, acc.getAccount_id());
+        }
         
         lbl_payAmount=new JLabel();
         lbl_payAmount.setBounds(10, 110, 100, 25);         
@@ -354,6 +388,8 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
         {
             txt_chequeNumber.setEditable(false);
             txt_payAmount.setEditable(false);
+            cbo_accounts.setVisible(false);
+            txt_chequeNumber.setVisible(true);
             if (cbo_payMode.getSelectedItem().equals("Cheque"))
             {
                 txt_chequeNumber.setEditable(true);
@@ -365,6 +401,13 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                 txt_chequeNumber.setEditable(true);
                 lbl_chequeNumber.setText("Transaction Code:");
                 txt_payAmount.setEditable(true);
+            }
+            else if (cbo_payMode.getSelectedItem().equals("Direct Transfer"))
+            {
+                lbl_chequeNumber.setText("Bank Account:");
+                cbo_accounts.setVisible(true);
+                txt_payAmount.setEditable(true);
+                txt_chequeNumber.setVisible(false);
             }
             else if (!cbo_payMode.getSelectedItem().equals("Select"))
             {
@@ -477,12 +520,24 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                     cash.setChequeNumber(txt_chequeNumber.getText()); //Mpesa/Orange/Airtel transaction number. This number shld be generated from the text msg received
                     cash.setTxType("DR");
                 }
-                else
+                else if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
                 {
-                    //assume cash account and the money goes to the cash collection account
-                    cash.setAccount("Cash");
-                    cash.setTxCode(2);
+                    //We need to get the selected bank account where the money was transferred to
+                    //We need to set the Account that is receiving the money
+                    //This does not go the cash/bank/cheque collection account
+                    
+                    /*
+                     * In my mind wot the system will do is to receive this money to bank collection account then
+                     * it should be automatically be transfered to the selected account
+                     * this to me will be a slightly better option
+                     * TBD soon
+                     */
+                    
+                    
+                    cash.setAccount("Bank");
+                    cash.setTxCode(17);
                     cash.setTxType("DR");
+                    //cash.s
                 }
                 cashList.add(cash);
             }   

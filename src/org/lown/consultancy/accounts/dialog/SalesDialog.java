@@ -27,6 +27,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Customer;
@@ -54,6 +55,10 @@ public class SalesDialog extends JPanel implements ActionListener{
     public static final String ACT_BACK="exit";
     public static final String ACT_PAYTERM="cash_credit";
     public static final String ACT_FIND="filter_product";
+    
+    public static final Font titleFont = new Font("Times New Roman", Font.BOLD, 14);
+    public static final Font title1Font = new Font("Times New Roman", Font.BOLD, 18);
+    public static final Font title2Font = new Font("Times New Roman", Font.ITALIC, 14);
     //public static final String ACT_FIND="filter_product";
     
     //Display panel
@@ -65,7 +70,7 @@ public class SalesDialog extends JPanel implements ActionListener{
     private JLabel lbl_txDate;
     private JLabel lbl_title2;
     private JLabel lbl_phone;
-    private JLabel lbl_txNumber;
+    private JLabel lbl_curPrice;
     private JLabel lbl_customerId;
     private JLabel lbl_salesRep;
     private JLabel lbl_title;
@@ -98,17 +103,17 @@ public class SalesDialog extends JPanel implements ActionListener{
     private JTextField txt_balance;
     private JTextField txt_changeDue;
     private JTextField txt_discount;
+    private JTextField txt_curPrice;
     private JComboBox cbo_salesRep;
     private JComboBox cbo_paymentTerms;
     private JComboBox cbo_productCategory;
     private JComboBox cbo_product;
     private JXDatePicker txDatePicker;
     private JXDatePicker txDueDatePicker;
-    public static final Font titleFont = new Font("Times New Roman", Font.BOLD, 14);
-    public static final Font title1Font = new Font("Times New Roman", Font.BOLD, 18);
-    public static final Font title2Font = new Font("Times New Roman", Font.ITALIC, 14);
+   
     private static Customer selectedCustomer=null;
     private ItemListTable itemListTable;
+    
     
     //Buttons
     private JButton btnAdd;
@@ -208,6 +213,8 @@ public class SalesDialog extends JPanel implements ActionListener{
         cbo_salesRep=new JComboBox(salesRepList.keySet().toArray());
         cbo_salesRep.setBounds(170, 85, 200, 20);              
         pTransaction.add(cbo_salesRep);
+        cbo_salesRep.addItem("Select");
+        cbo_salesRep.setSelectedItem("Select");
         
         lbl_txDueDate=new JLabel();
         lbl_txDueDate.setBounds(20, 120, 150, 20);         
@@ -438,12 +445,7 @@ public class SalesDialog extends JPanel implements ActionListener{
        
         
         dlgTransaction.add(pHeader);     
-        dlgTransaction.add(pPayTerms); 
-        //dlgTransaction.add(lbl_title);//add the invoice Header panel
-        //dlgTransaction.add(lbl_title2);//add the invoice Header panel
-        //dlgTransaction.add(lbl_pin);//add the invoice Header panel
-        //dlgTransaction.add(lbl_custName);//add the invoice Header panel
-        //dlgTransaction.add(lbl_address);//add the invoice Header panel
+        dlgTransaction.add(pPayTerms);         
         dlgTransaction.add(lbl_txCash);//add the invoice Header panel
         dlgTransaction.add(txt_txCash);//add the invoice Header panel
         dlgTransaction.add(lbl_changeDue);//add the invoice Header panel
@@ -597,7 +599,7 @@ public class SalesDialog extends JPanel implements ActionListener{
         dlgTransaction.add(lbl_txQtyAvailable);
         
         txt_txQtyAvailable=new JTextField();
-        txt_txQtyAvailable.setBounds(420, 295, 50, 20);         
+        txt_txQtyAvailable.setBounds(420, 295, 70, 20);         
         txt_txQtyAvailable.setText("");
         txt_txQtyAvailable.setEditable(false);
         txt_txQty.setHorizontalAlignment(JTextField.RIGHT);
@@ -634,26 +636,38 @@ public class SalesDialog extends JPanel implements ActionListener{
         //System.out.println("Is editable - " + this.cbo_productCategory.isEditable() + ". Surprise!");
         dlgTransaction.add(cbo_product);
         
+        lbl_curPrice=new JLabel();
+        lbl_curPrice.setBounds(510, 270, 100, 25);         
+        lbl_curPrice.setText("Unit Price:");       
+        dlgTransaction.add(lbl_curPrice);
+        
+        txt_curPrice=new JTextField();
+        txt_curPrice.setBounds(510, 295, 70, 20);         
+        txt_curPrice.setText("");
+        txt_curPrice.setEditable(false);
+        txt_curPrice.setHorizontalAlignment(JTextField.RIGHT);
+        dlgTransaction.add(txt_curPrice);
+        
         lbl_txDiscount=new JLabel();
-        lbl_txDiscount.setBounds(490, 270, 100, 25);         
+        lbl_txDiscount.setBounds(600, 270, 100, 25);         
         lbl_txDiscount.setText("Discount:");
         //lbl_custName.setFont(titleFont);
         dlgTransaction.add(lbl_txDiscount);
         
         txt_txDiscount=new JTextField();
-        txt_txDiscount.setBounds(490, 295, 50, 20);         
+        txt_txDiscount.setBounds(600, 295, 70, 20);         
         txt_txDiscount.setText("");
         txt_txDiscount.setHorizontalAlignment(JTextField.RIGHT);
         dlgTransaction.add(txt_txDiscount);
-        
+                       
         btnAdd=new JButton("Add Item");
-        btnAdd.setBounds(550, 290, 100, 25);
+        btnAdd.setBounds(680, 290, 100, 25);
         btnAdd.setActionCommand(ACT_ADD);
         btnAdd.addActionListener(this);
         dlgTransaction.add(btnAdd);
         
         btnDelete=new JButton("Drop Item");
-        btnDelete.setBounds(660, 290, 100, 25);
+        btnDelete.setBounds(790, 290, 100, 25);
         btnDelete.setActionCommand(ACT_DELETE);
         btnDelete.addActionListener(this);
         dlgTransaction.add(btnDelete);
@@ -702,6 +716,8 @@ public class SalesDialog extends JPanel implements ActionListener{
                     JOptionPane.showMessageDialog(null, "The Available Quantity is not Enough to service this transaction...");
                     return;
                 }
+               double sellprice=productService.getProductSellingPrice(selProduct);
+               txt_curPrice.setText(df.format(sellprice)); 
             }
             catch(Exception ex)
             {
@@ -838,15 +854,18 @@ public class SalesDialog extends JPanel implements ActionListener{
         Product product=productService.getProductById(selProduct);
         double sellprice=productService.getProductSellingPrice(selProduct);
         double discount=0.0;
-        if(!txt_txDiscount.getText().isEmpty()&& isNumeric(txt_txDiscount.getText()) )
-        {
-            discount=Double.parseDouble(txt_txDiscount.getText());
-        }
+        
 
         int qty=0;
         if(!txt_txQty.getText().isEmpty()&& isNumeric(txt_txQty.getText()) )
         {
             qty=Integer.parseInt(txt_txQty.getText());
+        }
+        
+        if(!txt_txDiscount.getText().isEmpty()&& isNumeric(txt_txDiscount.getText()) )
+        {
+            discount=Double.parseDouble(txt_txDiscount.getText());
+            discount=discount*qty;
         }
 
 
@@ -909,6 +928,13 @@ public class SalesDialog extends JPanel implements ActionListener{
         if (itemsList.isEmpty())
         {
             JOptionPane.showMessageDialog(null, "No Items are available on the Till to be Posted...");
+            return;
+        }
+        
+        
+        if (cbo_salesRep.getSelectedItem().equals("Select"))
+        {
+            JOptionPane.showMessageDialog(null, "Select the Sales Representative First, then proceed...");
             return;
         }
         
