@@ -18,6 +18,7 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Prepayment;
+import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.Sql;
@@ -238,7 +239,7 @@ public class SalesService {
              */
             for(SalesItem salesItem:salesItems)
             {
-                preppedStmtInsert="INSERT INTO transactions (tx_summary_id,txdate,product_id,txqty,txamount,customer_id,discount,dateCreated,createdby,txtype) VALUES(?,?,?,?,?,?,?,?,?,?)";
+                preppedStmtInsert="INSERT INTO transactions (tx_summary_id,txdate,product_id,txqty,txamount,customer_id,discount,dateCreated,createdby,txtype,unitprice) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
                 pst=Sql.getConnection().prepareStatement(preppedStmtInsert,Sql.createStatement().RETURN_GENERATED_KEYS);
                 
                 salesItem.setTransaction_summary_id(txid);
@@ -252,6 +253,7 @@ public class SalesService {
                 pst.setTimestamp(8, Sql.getCurrentTimeStamp());
                 pst.setInt(9, MainMenu.gUser.getUserId()); 
                 pst.setInt(10, salesItem.getTxType()); 
+                pst.setDouble(11, salesItem.getSellPrice());
                 pst.execute();
                 
                 int autoTxId = -1; 
@@ -369,7 +371,7 @@ public class SalesService {
              */
             for(SalesItem salesItem:salesItems)
             {
-                preppedStmtInsert="INSERT INTO transactions (tx_summary_id,txdate,product_id,txqty,txamount,customer_id,discount,dateCreated,createdby,txtype) VALUES(?,?,?,?,?,?,?,?,?,?)";
+                preppedStmtInsert="INSERT INTO transactions (tx_summary_id,txdate,product_id,txqty,txamount,customer_id,discount,dateCreated,createdby,txtype,unitprice) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
                 pst=Sql.getConnection().prepareStatement(preppedStmtInsert,Sql.createStatement().RETURN_GENERATED_KEYS);
                 
                 salesItem.setTransaction_summary_id(autoIncKeyFromApi);
@@ -383,6 +385,7 @@ public class SalesService {
                 pst.setTimestamp(8, Sql.getCurrentTimeStamp());
                 pst.setInt(9, MainMenu.gUser.getUserId());     
                 pst.setInt(10, salesItem.getTxType()); 
+                pst.setDouble(5, salesItem.getSellPrice());
                 pst.execute();
                 
                 int autoTxId = -1; 
@@ -698,6 +701,43 @@ public class SalesService {
         return txList;
     }
     
+    public SalesTransaction getTransactionsById(Customer c, Integer id)
+    {
+        
+        SalesTransaction salesTx=new SalesTransaction();
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting Category Details given the internal DB id... ");
+            String sqlStmt="Select tx_summary_id,txdate,txamount, customer_id,txduedate,if(txtype='Credit','Invoice','Cash Sale') as txtype,";
+            sqlStmt+="if(paid=0,false,true) as paid, salesrep_id "; 
+            sqlStmt+="from transactionsummary WHERE voided=0 and tx_summary_id =" + id.intValue() + "";
+            sqlStmt+=" and customer_id =" + c.getCustomer_id();
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                salesTx.setTx_summary_id(rs.getInt("tx_summary_id"));
+                salesTx.setTxSalesAmount(rs.getDouble("txamount"));
+                salesTx.setTxSalesDate(rs.getDate("txdate"));
+                salesTx.setTxSalesDueDate(rs.getDate("txduedate"));
+                salesTx.setTxType(rs.getString("txtype"));
+                salesTx.setPaid(rs.getBoolean("paid"));
+                salesTx.setSalesRep(rs.getInt("salesrep_id"));
+                                
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return salesTx;
+    }
     /*
      * Get Transactions by dates
      */
@@ -742,6 +782,55 @@ public class SalesService {
         return txList;
     }
     
+    /*
+     * Get Transactions by dates
+     */
+    public List<SalesItem> getTransactionsByInvoiceId(Customer c,Integer invoicenum)
+    {
+        List<SalesItem> txList=new ArrayList<SalesItem>();
+        SalesItem salesTx;
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Invoice details ... ");
+            String sqlStmt="Select transaction_id,tx_summary_id,txdate,txamount, customer_id,txqty,product_id,";
+            sqlStmt+=" discount, unitprice "; 
+            sqlStmt+=" from transactions WHERE voided=0 and customer_id="+c.getCustomer_id();
+            sqlStmt+=" and tx_summary_id="+invoicenum.intValue();
+            
+            System.out.println("SQL statment: "+sqlStmt);
+            
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                salesTx=new SalesItem();
+                Product p=new Product();                
+               
+                p.setProduct_id(rs.getInt("product_id"));
+                salesTx.setTransaction_summary_id(rs.getInt("tx_summary_id"));
+                salesTx.setAmount(rs.getDouble("txamount"));
+                salesTx.setSalesDate(rs.getDate("txdate"));
+                salesTx.setDiscount(rs.getDouble("discount"));
+                salesTx.setSellPrice(rs.getDouble("unitprice"));
+                salesTx.setCustomer(c);
+                salesTx.setSales_id(rs.getInt("transaction_id"));
+                salesTx.setQuantity(rs.getInt("txqty"));                
+                salesTx.setProduct(p);                               
+                txList.add(salesTx);                
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return txList;
+    }
     /*
      * Get Customer's Last Payment
      */

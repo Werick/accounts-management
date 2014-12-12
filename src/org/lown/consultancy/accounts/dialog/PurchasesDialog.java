@@ -37,6 +37,8 @@ import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dao.ProductService;
 import org.lown.consultancy.accounts.dao.PurchasesService;
 import org.lown.consultancy.accounts.tables.PurchasesList;
+import org.lown.consultancy.accounts.tables.PurchasesTransactions;
+import org.lown.consultancy.accounts.tables.SupplierList;
 
 /**
  *
@@ -194,7 +196,8 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         
         txt_days=new JTextField();
         txt_days.setBounds(170, 50, 100, 20);         
-        txt_days.setText("");
+        txt_days.setHorizontalAlignment(JTextField.RIGHT);
+        
         //txt_days.setEditable(false);
         /*
          * Add a document Listener method to track changes in the text box and calls a calculate method
@@ -250,6 +253,7 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         txDueDatePicker.setDate(new Date());
         txDueDatePicker.setFormats(new String[] { "dd-MMM-yyyy" });
         txDueDatePicker.setBounds(170, 75, 150, 20);
+        txDueDatePicker.setEditable(false);
         pTransaction.add(txDueDatePicker);
         
         lbl_txNumber=new JLabel();
@@ -543,7 +547,13 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         btnBack.addActionListener(this);
         pPurchaseItems.add(btnBack);
         
+        
+        
         dlgPurchase.add(pTransaction);//add the invoice details panel
+        
+        //load details if supplier and invoice is selected
+        displayInvoice();
+        
         dlgPurchase.setVisible(true);          
         dlgPurchase.dispose(); //close the app once done
     }
@@ -656,6 +666,9 @@ public class PurchasesDialog extends JPanel implements ActionListener{
                         System.out.println("Test Posting transaction");
                         try {                
                                 purchasesService.postPurchases(purchaseList);    
+                                
+                                // update supplier dashboard
+                                updateSupplierDashboard();
                                 dlgPurchase.setVisible(false);                               
                                 //btnPostTx.setText("Add Transaction");                            
                         } catch (SQLException ex) {
@@ -701,6 +714,11 @@ public class PurchasesDialog extends JPanel implements ActionListener{
             if (btnPostTx.getText().equalsIgnoreCase("Add Transaction"))
             {
                  JOptionPane.showMessageDialog(null, "Click Add Transaction Button First, then proceed...");
+                 return;
+            }
+            if (txDatePicker.getDate().compareTo(new Date())>0)
+            {
+                 JOptionPane.showMessageDialog(null, "The Invoice Date should be greater than the current Date...");
                  return;
             }
             addItemToTill();
@@ -749,6 +767,13 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         {
             qty=Integer.parseInt(txt_txQty.getText());
         }
+        
+        double unitPrice=0.0;
+        if(!txt_curPrice.getText().isEmpty()&& isNumeric(txt_curPrice.getText()) )
+        {
+            unitPrice=Double.parseDouble(txt_curPrice.getText());
+        }
+        
         vat=netAmount*(vatRate/100.0);
         double amount=(netAmount-vat);
         totalAmount=totalAmount+amount;//accumulate the total as items are added on the list
@@ -764,7 +789,8 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         purchaseItem.setVat(vat);
         purchaseItem.setDate(txDatePicker.getDate());
         purchaseItem.setSupplier(null); //add supplier
-
+        purchaseItem.setUnitPrice(unitPrice);
+        
          itemsList.insertRow(purchaseItem);  
          txt_invoiceNetTotal.setText(df.format(totalAmount));
          txt_invoiceVatTotal.setText(df.format(vatTotal));
@@ -776,7 +802,36 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         txt_txQty.setText("");        
         txt_txNetAmount.setText("");
         chk_txVat.setSelected(false);
+        txt_curPrice.setText("");
+        txt_txQtyAvailable.setText("");
+         
      }
+     private void updateSupplierDashboard()
+    {
+        
+        try
+        {
+            double totalPurchases=purchasesService.getTotalPurchasesBySupplierId(SupplierList.selectedSupplier.getSupplier_id());
+            double totalPayments=purchasesService.getTotalPaymentsBySupplierId(SupplierList.selectedSupplier.getSupplier_id());
+            double balance=totalPurchases-totalPayments;
+            double lastPayment=purchasesService.getLastPaymentMade(selectedSupplier);
+            SupplierDashboard.txt_totalPurchases.setText(SupplierDashboard.df.format(totalPurchases));
+            if (balance>=0)
+            {
+                SupplierDashboard.txt_balance.setText(SupplierDashboard.df.format(balance));
+            }
+            else
+            {                        
+                SupplierDashboard.txt_balance.setText("("+SupplierDashboard.df.format(balance)+")");  
+            }
+            SupplierDashboard.txt_lastPayment.setText(SupplierDashboard.df.format(lastPayment));
+        }
+        catch(Exception ex)
+        {
+            //ignore error
+        }
+        
+    }
      
      public static void createAndShowGUI(Supplier supplier)
      {
@@ -801,4 +856,31 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         }  
         return true;  
     }
+     
+     private void displayInvoice()
+     {
+         if (SupplierList.selectedSupplier!=null && PurchasesTransactions.selectedInvoice!=null)
+         {
+             itemsList.displayInvoice(SupplierList.selectedSupplier, PurchasesTransactions.selectedInvoice);
+             List<Purchase> purchaseList=itemsList.getPurchasesItemList();
+             for(Purchase p:purchaseList)
+             {
+                 
+                 totalAmount=totalAmount+p.getNetAmount();//accumulate the total as items are added on the list
+                 vatTotal=vatTotal+p.getVat();
+                 invoiceTotal=invoiceTotal+p.getAmount();
+             }
+             txt_invoiceNetTotal.setText(df.format(totalAmount));
+             txt_invoiceVatTotal.setText(df.format(vatTotal));
+             txt_invoiceTotal.setText(df.format(invoiceTotal));
+             txDatePicker.setDate(PurchasesList.purchasesItemList2.get(0).getDate());
+             txDueDatePicker.setDate(PurchasesList.purchasesItemList2.get(0).getDueDate());
+             txt_txNumber.setText(PurchasesList.purchasesItemList2.get(0).getInvoiceNumber());
+             System.out.println(PurchasesList.purchasesItemList2.get(0).getInvoiceNumber());
+             btnAdd.setEnabled(false);
+             btnDelete.setEnabled(false);
+             btnPostTx.setEnabled(false);
+             btnPrintInvoice.setEnabled(false);
+         }
+     }
 }

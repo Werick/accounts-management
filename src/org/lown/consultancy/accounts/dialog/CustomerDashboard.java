@@ -108,6 +108,8 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         balance=0.0;
         totalCash=0.0;
         ss=new SalesService();
+        CustomerListTable.selectedCustomer=null; 
+        //TransactionsTable.selectedInvoice=null;
         
         dlgCustomerDashboard= new JDialog((JDialog)null, "Customer Center", true);
         dlgCustomerDashboard.setLayout(null);
@@ -483,7 +485,8 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         {
             if(CustomerListTable.selectedCustomer!=null)
             {
-               SalesDialog.createAndShowGUI(CustomerListTable.selectedCustomer);  
+               TransactionsTable.selectedInvoice=null;
+                SalesDialog.createAndShowGUI(CustomerListTable.selectedCustomer);  
             }
             else
             {
@@ -514,49 +517,10 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         else if(e.getActionCommand().equals(ACT_CREATE))
         {
               CustomerListTable.selectedCustomer=null;       
-              clearFields();
-              //load registration form
-//              CustomerDialog customerDialog=new CustomerDialog();
+              clearFields();   
               CustomerDialog.createAndShowGUI();
 	}
-//        else if(e.getActionCommand().equals(ACT_VIEW))
-//        {
-//            if (customerListTable.getRowCount()==0)
-//            {
-//                    return;
-//            }
-//            else
-//             {                    
-//                 //Should Load the Customer Dash Board
-//                 if(CustomerListTable.selectedCustomer!=null)
-//                 {
-//                    //Should Load the Customer Dash Board                    
-//                    txt_customerName.setText(CustomerListTable.selectedCustomer.getCustomerName());
-//                    txt_customerNumber.setText(CustomerListTable.selectedCustomer.getCustomerNumber());
-//                    txt_phone.setText(CustomerListTable.selectedCustomer.getPhone());
-//                    txt_address.setText(CustomerListTable.selectedCustomer.getAddress());
-//                    txt_contact.setText(CustomerListTable.selectedCustomer.getContactPerson());
-//                    //SalesDialog.createAndShowGUI(CustomerListTable.selectedCustomer); 
-//                    txListTable.insertRow(CustomerListTable.selectedCustomer);
-//                    
-//                    totalSales=ss.getTotalSalesByCustomerId(CustomerListTable.selectedCustomer.getCustomer_id());
-//                    totalCash=ss.getTotalCashByCustomerId(CustomerListTable.selectedCustomer.getCustomer_id());
-//                    balance=totalSales-totalCash;
-//                    txt_totalSales.setText(df.format(totalSales));
-//                    if (balance>=0)
-//                    {
-//                        txt_balance.setText(df.format(balance));
-//                    }
-//                    else
-//                    {                        
-//                        txt_balance.setText("("+df.format(balance)+")");  
-//                    }
-//                    
-//                 }
-//                    
-//                }
-//            return;
-//	}
+
         
         
     }

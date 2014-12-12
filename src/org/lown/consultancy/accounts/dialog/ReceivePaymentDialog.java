@@ -28,8 +28,10 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
+import org.lown.consultancy.accounts.CashTransfer;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.SalesTransaction;
+import org.lown.consultancy.accounts.dao.CashService;
 import org.lown.consultancy.accounts.dao.CompanyService;
 import org.lown.consultancy.accounts.dao.SalesService;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
@@ -105,6 +107,10 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
     private CompanyService companyService;
     private List<Account> accountList;
     private static Map<String, Integer> accountMap;
+    
+    private CashTransfer sourceAcc;
+    private CashTransfer destinationAcc;
+    private CashService cs;
     
     public ReceivePaymentDialog()
     {
@@ -532,8 +538,36 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                      * this to me will be a slightly better option
                      * TBD soon
                      */
+                    sourceAcc=new CashTransfer();
+                    sourceAcc.setTransactionType("CR");
+                    sourceAcc.setTransactionCode(7); //withdrawal
+                    sourceAcc.setTransferDate(dp_paymentDate.getDate());
+                    sourceAcc.setDescription("Direct Transfer");
                     
+                    destinationAcc=new CashTransfer();
+                    destinationAcc.setTransactionType("DR");
+                    destinationAcc.setTransactionCode(1); //deposit
+                    destinationAcc.setTransferDate(dp_paymentDate.getDate());
+                    destinationAcc.setDescription("Direct Transfer");
                     
+                    int selAccount=1; //assume cash account is selected
+                    Account source=new Account();
+                    Account destination=new Account();
+                    selAccount=accountMap.get(cbo_accounts.getSelectedItem());
+                    destination=companyService.getAccountById(selAccount);
+                    
+                    source.setAccount_id(0);
+                    source.setAccount_name("Bank");
+                    
+                    if (isNumeric(txt_payAmount.getText()))
+                    {
+                        sourceAcc.setAmount(Double.parseDouble(txt_payAmount.getText()));
+                        destinationAcc.setAmount(Double.parseDouble(txt_payAmount.getText()));
+                    }
+                    sourceAcc.setAccount(source);
+                    destinationAcc.setAccount(destination);
+                    
+                    //cash object
                     cash.setAccount("Bank");
                     cash.setTxCode(17);
                     cash.setTxType("DR");
@@ -574,7 +608,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                     cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("DR");
                 }
-                else
+                else if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
                 {
                     //assume cash account
                     cash.setAccount("Cash");
@@ -606,6 +640,13 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                     {
                         ss.postPrePaymentAllocation(prepayAllotList);
                     }
+                    
+                    //excecute only if direct transfer is selected
+                    if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
+                    {
+                        cs=new CashService();
+                        cs.transferMoney(sourceAcc, destinationAcc);
+                    }
                     //Ideally We'll print the receipt and close this window
                     //Printing procedure will come in here
                     
@@ -630,7 +671,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
      */
     private boolean allocatePayment()
     {
-        boolean ok=false;
+        boolean ok=false;       
         //System.out.println("Testing Allot Tx");
         if (cbo_payMode.getSelectedIndex()!=0) //proceed allocation only if the payment method is selected
         {

@@ -21,9 +21,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Product;
+import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesItem;
+import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dao.SalesService;
 
 /**
  *
@@ -34,8 +39,10 @@ public class ItemListTable extends JPanel{
     private String[] columnTitle=new String[]{"Qty","Code","Description","Unit Price","Discount","Amount"};
     private static DefaultTableModel model ;
     private Object[][] data;
-    private List<SalesItem> SalesItemList;
+    private List<SalesItem> salesItemList;
+    public static List<SalesItem> salesItemList2;
     private ProductService ps;
+    private SalesService ss;
     
     public static double selectedAmount;
     public static double selectedDiscount;
@@ -116,7 +123,7 @@ public class ItemListTable extends JPanel{
     }
     public List<SalesItem> getSalesItemList()
     {
-        SalesItemList=new ArrayList<SalesItem>();
+        salesItemList=new ArrayList<SalesItem>();
         SalesItem salesItem;
         System.out.println("Total Rows: " + jTable.getRowCount());//comment if not debugging
         for (int i=0;i<jTable.getRowCount();i++)
@@ -137,10 +144,10 @@ public class ItemListTable extends JPanel{
             salesItem.setSellPrice(Double.parseDouble(sp.toString()));
             salesItem.setDiscount(Double.parseDouble(discount.toString()));
             salesItem.setProduct(product);
-            SalesItemList.add(salesItem);
+            salesItemList.add(salesItem);
         }
         
-        return SalesItemList;
+        return salesItemList;
     }
     private void getSelectedRow()
     {
@@ -182,5 +189,34 @@ public class ItemListTable extends JPanel{
         
     }
    
-    
+public void displayInvoice(Customer s, Integer Invoicenum)
+    {
+        //remove all rows      
+        model.getDataVector().removeAllElements();
+        jTable.repaint();   
+        ss=new SalesService();
+        ps=new ProductService();
+        salesItemList2 = null;
+        if(ss.getTransactionsByInvoiceId(s, Invoicenum) !=null)
+        {
+            salesItemList2=ss.getTransactionsByInvoiceId(s, Invoicenum);
+        }
+        
+        if (!salesItemList2.isEmpty())
+        {
+            for(SalesItem salesItem:salesItemList2)
+            {
+                //Insert Item in the List
+                if(salesItem!=null)
+                {
+                    salesItem.setProduct(ps.getProductById(salesItem.getProduct().getProduct_id()));
+                    //System.out.println("Testing Stuff"+p.getCustomerNumber());            
+                    model.insertRow(jTable.getRowCount(),new Object[]{salesItem.getQuantity(),salesItem.getProduct().getProductCode(),salesItem.getProduct().getProductName(),df.format(salesItem.getSellPrice()),df.format(salesItem.getDiscount()),df.format(salesItem.getAmount())});
+
+                }
+            }
+        }
+        
+
+    }    
 }

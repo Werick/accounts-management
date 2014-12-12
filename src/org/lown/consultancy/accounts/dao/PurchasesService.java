@@ -16,6 +16,7 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Prepayment;
+import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.Sql;
 import org.lown.consultancy.accounts.Supplier;
@@ -292,8 +293,8 @@ public class PurchasesService {
              */
             for(Purchase purchaseItem:purchaseItems)
             {
-                preppedStmtInsert="INSERT INTO purchases (pdate,product_id,supplier_id,quantity,amount,vat,netamount,invoicenum,dateCreated,createdby,duedate) ";
-                preppedStmtInsert+=" VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+                preppedStmtInsert="INSERT INTO purchases (pdate,product_id,supplier_id,quantity,amount,vat,netamount,invoicenum,dateCreated,createdby,duedate,unitprice) ";
+                preppedStmtInsert+=" VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
                 PreparedStatement pst=Sql.getConnection().prepareStatement(preppedStmtInsert,Sql.createStatement().RETURN_GENERATED_KEYS);                
                 
                 pst.setDate(1, new java.sql.Date(purchaseItem.getDate().getTime()));   //converting util date to sql date 
@@ -307,6 +308,7 @@ public class PurchasesService {
                 pst.setTimestamp(9, Sql.getCurrentTimeStamp());
                 pst.setInt(10, MainMenu.gUser.getUserId());
                 pst.setDate(11, new java.sql.Date(purchaseItem.getDueDate().getTime()));   //converting util date to sql date 
+                pst.setDouble(12, purchaseItem.getUnitPrice());
                 pst.execute();
                 
                 // Example of using Statement.getGeneratedKeys()
@@ -471,6 +473,57 @@ public List<Purchase> getPurchasesBySupplierId(int id)
         return txList;
     }
 
+public List<Purchase> getPurchasesBySupplierId(int id, String invoicenum)
+    {
+        List<Purchase> txList=new ArrayList<Purchase>();
+        Purchase purchasesTx;
+        try
+        {
+            //log info
+            ProductService ps=new ProductService();
+            AccountsManagement.logger.info("Getting Category Details given the internal DB id... ");
+            String sqlStmt="Select purchase_id,quantity,pdate,netamount, vat, amount, unitprice,product_id,duedate, ";
+            sqlStmt+="if(paid=0,false,true) as paid, invoicenum, supplier_id "; 
+            sqlStmt+="from purchases WHERE voided=0 and supplier_id =" + id + " and invoicenum='"+invoicenum+"' order by pdate";
+            
+            System.out.println("Debugging: "+sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                purchasesTx=new Purchase();
+                Supplier supplier=new Supplier();
+                Product product=new Product();
+                
+                product.setProduct_id(rs.getInt("product_id"));                
+                supplier.setSupplier_id(rs.getInt("supplier_id"));
+                purchasesTx.setInvoiceNumber(rs.getString("invoicenum"));
+                purchasesTx.setProduct(product);
+                purchasesTx.setAmount(rs.getDouble("amount"));
+                purchasesTx.setVat(rs.getDouble("vat"));
+                purchasesTx.setNetAmount(rs.getDouble("netamount"));
+                purchasesTx.setDate(rs.getDate("pdate"));
+                purchasesTx.setDueDate(rs.getDate("duedate"));               
+                purchasesTx.setPaid(rs.getBoolean("paid"));
+                purchasesTx.setSupplier(supplier);
+                purchasesTx.setUnitPrice(rs.getDouble("unitprice"));
+                purchasesTx.setQty(rs.getInt("quantity"));
+                txList.add(purchasesTx);            
+                
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return txList;
+    }
+
+
 public List<Purchase> getPurchasesByDates(Supplier supplier,Date startDate, Date endDate)
     {
         List<Purchase> txList=new ArrayList<Purchase>();
@@ -483,7 +536,7 @@ public List<Purchase> getPurchasesByDates(Supplier supplier,Date startDate, Date
             sqlStmt+=" if(paid=0,false,true) as paid, invoicenum, supplier_id "; 
             sqlStmt+=" from purchases WHERE voided=0 and supplier_id =" + supplier.getSupplier_id();
             sqlStmt+=" and pdate between '" + new java.sql.Date(startDate.getTime()) + "' and '" + new java.sql.Date(endDate.getTime())+"'";
-            
+            sqlStmt+=" group by invoicenum, pdate order by duedate ";
             System.out.println("Debugging: "+sqlStmt);
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
@@ -558,7 +611,7 @@ public List<Purchase> getInvoiceSummaryBySupplierId(int id)
             String sqlStmt="SELECT pdate,duedate,supplier_id,sum(netamount)as netamount,sum(vat) as vat, sum(amount)as amount, "; 
             sqlStmt+=" if(paid=0,false,true) as paid, invoicenum, supplier_id "; 
             sqlStmt+=" from purchases WHERE paid=0 and voided=0 and supplier_id =" + id + "";
-            sqlStmt+=" group by invoicenum order by duedate ";
+            sqlStmt+=" group by invoicenum, pdate order by duedate ";
             
             System.out.println("Debugging: "+sqlStmt);
             ResultSet rs=Sql.executeQuery(sqlStmt);

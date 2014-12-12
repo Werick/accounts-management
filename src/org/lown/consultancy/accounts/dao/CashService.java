@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.CashTransfer;
 import org.lown.consultancy.accounts.Sql;
 import org.lown.consultancy.accounts.dialog.MainMenu;
 
@@ -32,7 +33,7 @@ public class CashService {
      * @param User user     
      * @
      */
-    public void transferMoney() throws SQLException
+    public void transferMoney(CashTransfer source, CashTransfer destination) throws SQLException
     {
          try
         {
@@ -42,23 +43,39 @@ public class CashService {
             /*
              * Transfering from the source account
              */
-            preppedStmtInsert="INSERT INTO cash_bank (tx_date,tx_code,tx_type,amount,createdby,datecreated,account,account_tx_id) VALUES(?,?,?,?,?,?,?,?)";
+            preppedStmtInsert="INSERT INTO cash_bank (tx_date,tx_code,tx_type,amount,createdby,datecreated,account,account_tx_id,description) ";
+            preppedStmtInsert+="VALUES(?,?,?,?,?,?,?,?,?)";
             PreparedStatement pst=Sql.getConnection().prepareStatement(preppedStmtInsert);            
-//            pst.setString(1, product.getProductCode());
-//            pst.setString(2, product.getProductName()); 
-//            pst.setInt(3,  product.getCategory().getCategory_id());
-//            pst.setString(4, product.getMeasureUnit()); 
-//            pst.setTimestamp(5, Sql.getCurrentTimeStamp());
-            pst.setInt(6, MainMenu.gUser.getUserId());   
+            pst.setDate(1, new java.sql.Date(source.getTransferDate().getTime()));
+            pst.setInt(2,  source.getTransactionCode());
+            pst.setString(3, source.getTransactionType());            
+            pst.setDouble(4, source.getAmount());            
+            pst.setInt(5, MainMenu.gUser.getUserId());  
+            pst.setTimestamp(6, Sql.getCurrentTimeStamp());
+            pst.setString(7, source.getAccount().getAccount_name()); 
+            pst.setInt(8,  source.getAccount().getAccount_id());
+            pst.setString(9, source.getDescription()); 
             pst.execute();
             
             
             /*
              * Transfering to the destination account
              */
-            preppedStmtInsert="INSERT INTO cash_bank (tx_date,tx_code,tx_type,amount,createdby,datecreated,account,account_tx_id) VALUES(?,?,?,?,?,?,?,?)";
+            preppedStmtInsert="INSERT INTO cash_bank (tx_date,tx_code,tx_type,amount,createdby,datecreated,account,account_tx_id,description) ";
+            preppedStmtInsert+="VALUES(?,?,?,?,?,?,?,?,?)";
+            pst=Sql.getConnection().prepareStatement(preppedStmtInsert);            
+            pst.setDate(1, new java.sql.Date(destination.getTransferDate().getTime()));
+            pst.setInt(2,  destination.getTransactionCode());
+            pst.setString(3, destination.getTransactionType());            
+            pst.setDouble(4, destination.getAmount());            
+            pst.setInt(5, MainMenu.gUser.getUserId());  
+            pst.setTimestamp(6, Sql.getCurrentTimeStamp());
+            pst.setString(7, destination.getAccount().getAccount_name()); 
+            pst.setInt(8,  destination.getAccount().getAccount_id());
+            pst.setString(9, destination.getDescription()); 
+            pst.execute();
             Sql.getConnection().commit();
-            JOptionPane.showMessageDialog(null, "Product Record Added...");
+            JOptionPane.showMessageDialog(null, "Cash Transfer Successfully Excecuted...");
         }
         catch (SQLException e) 
         {
@@ -106,7 +123,7 @@ public class CashService {
             AccountsManagement.logger.info("get available cash... ");
             //get total cash collected
             String sqlStmt="SELECT customer_id,sum(amount) as total FROM cash_bank t "; 
-            sqlStmt+="where voided=0 and tx_type='DR' and account ='Cash'";
+            sqlStmt+="where voided=0 and tx_type='DR' and account ='Cash' and account_tx_id in(0,1) ";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
@@ -228,7 +245,7 @@ public class CashService {
             AccountsManagement.logger.info("get available cash... ");
             //get total cash collected
             String sqlStmt="SELECT customer_id,sum(amount) as total FROM cash_bank t "; 
-            sqlStmt+="where voided=0 and tx_type='CR' and account ='Cash'";
+            sqlStmt+="where voided=0 and tx_type='CR' and account ='Cash' and account_tx_id in(0,1)";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
@@ -260,7 +277,7 @@ public class CashService {
             AccountsManagement.logger.info("get available cheque collection transfers... ");
             //get total cash collected
             String sqlStmt="SELECT sum(amount) as total FROM cash_bank t "; 
-            sqlStmt+="where voided=0 and tx_type='CR' and account ='Bank' and tx_code=7 ";
+            sqlStmt+="where voided=0 and tx_type='CR' and account ='Bank' and tx_code in(7) ";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())

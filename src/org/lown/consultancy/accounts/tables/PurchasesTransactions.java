@@ -34,6 +34,7 @@ import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dao.PurchasesService;
 import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dialog.PurchasesDialog;
 
 /**
  *
@@ -51,6 +52,7 @@ public class PurchasesTransactions extends JPanel{
     public static Purchase selectedTx;
     private DecimalFormat df = new DecimalFormat("#0.00");
     private JCheckBox checkBox = new JCheckBox();
+    public static String selectedInvoice;
     
     public PurchasesTransactions()
     {
@@ -102,13 +104,15 @@ public class PurchasesTransactions extends JPanel{
         jTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);//Invoice id
         jTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);//Amount
         
+    //display invoice details after a double click
         jTable.addMouseListener(new MouseAdapter(){
             @Override
                     public void mouseClicked(MouseEvent e)
                     {
-                        if (e.getClickCount() == 1)// use 2 for a double click use 1 for a single click
+                        if (e.getClickCount() == 2)// use 2 for a double click use 1 for a single click
                         {
-                            System.out.println(" Single click" );
+                            System.out.println(" Double click" );
+                            PurchasesDialog.createAndShowGUI(SupplierList.selectedSupplier);
                         }
                     }
         } );
@@ -117,6 +121,7 @@ public class PurchasesTransactions extends JPanel{
         add(header);
         validate();          
     }
+    
     
     public int getRowCount()
     {
@@ -147,6 +152,7 @@ public class PurchasesTransactions extends JPanel{
                                 System.out.println(String.format("Selected Row in view:  " + data.toString()));
                             
                                 //selectedSupplier=ps.getCustomerByNumber(data.toString()); 
+                                selectedInvoice=data.toString();
                                 
                            }
                            catch(java.lang.ArrayIndexOutOfBoundsException ex)
@@ -176,7 +182,7 @@ public class PurchasesTransactions extends JPanel{
         transactions = null;
         if(ps.getPurchasesBySupplierId(s.getSupplier_id())!=null)
         {
-            transactions=ps.getPurchasesBySupplierId(s.getSupplier_id());
+            transactions=ps.getInvoiceSummaryBySupplierId(s.getSupplier_id());
         }
             
             if(!transactions.isEmpty())
@@ -199,6 +205,7 @@ public class PurchasesTransactions extends JPanel{
 
     }
     
+   
     public void insertRow(Supplier s, Date startDate,Date endDate)
     {
         //remove all rows      

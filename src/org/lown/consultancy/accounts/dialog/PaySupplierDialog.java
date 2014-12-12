@@ -95,7 +95,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
     private JTextField txt_payAmount;
     
     
-    private String payOptions[]={"Select","Cash","Bank","Mobile Money","Other"};
+    private String payOptions[]={"Select","Cash","Bank","Mobile Money","Direct Transfer"};
     private JComboBox cbo_payMode;
     private JComboBox cbo_bank_mobile;
     
@@ -432,14 +432,26 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
                 cbo_bank_mobile.removeAllItems();
                 cbo_bank_mobile.setEnabled(true);
                 System.out.println(cbo_payMode.getSelectedItem().toString());
-                accountList=companyService.getAccountByCategory(cbo_payMode.getSelectedItem().toString());
+                if (cbo_payMode.getSelectedItem().equals("Direct Transfer"))
+                {
+                     accountList=companyService.getAllAccounts();
+                }
+                else
+                {
+                     accountList=companyService.getAccountByCategory(cbo_payMode.getSelectedItem().toString());
+                }
+               
                 
                 accountMap.clear();
                 cbo_bank_mobile.addItem("Select");
                 for (Account acc:accountList)
                 {
-                    cbo_bank_mobile.addItem(acc.getBank_name()+" - "+acc.getBranch());
-                    String accName=acc.getBank_name()+" - "+acc.getBranch();// this combination my require some change in future
+                    if(acc.getBank_name().equalsIgnoreCase("Cash")) //skip cash account
+                    {
+                        continue;
+                    }
+                    cbo_bank_mobile.addItem(acc.getAccount_name()+" - "+ acc.getBank_name()+" - "+acc.getBranch());
+                    String accName=acc.getAccount_name()+" - "+ acc.getBank_name()+" - "+acc.getBranch();// this combination my require some change in future
                     accountMap.put(accName, acc.getAccount_id());
                 }
             }
@@ -465,7 +477,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
                  Cash cash=new Cash();    
                  Prepayment prepayAllocation=new Prepayment();
                  int selAccount=1; //assume cash account is selected
-                 if((cbo_payMode.getSelectedIndex()==2)||(cbo_payMode.getSelectedIndex()==3))
+                 if(cbo_payMode.getSelectedIndex()>1)
                  {
                      selAccount=accountMap.get(cbo_bank_mobile.getSelectedItem());
                  }
@@ -534,25 +546,24 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
                  {
                     cash.setAccount("Bank");
                     cash.setTxCode(5);
-                    cash.setChequeNumber(txt_chequeNumber.getText());
-
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
                  else if(cbo_payMode.getSelectedItem().equals("Mobile Money"))
                  {
                     cash.setAccount("Mobile Money");
                     cash.setTxCode(16);
-                    cash.setChequeNumber(txt_chequeNumber.getText());
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
-                 else
+                 else if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
                  {
-                    //assume cash account
-                    cash.setAccount("Cash");
-                    cash.setTxCode(4);
+                    cash.setAccount("Direct Transfer");
+                    cash.setTxCode(17);
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
-                     cashList.add(cash);
+                 cashList.add(cash);
              }   
                  
              /*
@@ -573,25 +584,25 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
                     cash.setTxCode(4);
                     cash.setTxType("CR");
                  }
-                 else if(cbo_payMode.getSelectedItem().equals("Cheque"))
+                 else if(cbo_payMode.getSelectedItem().equals("Bank"))
                  {
                     cash.setAccount("Bank");
                     cash.setTxCode(5);
-                    cash.setChequeNumber(txt_chequeNumber.getText());
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
                  else if(cbo_payMode.getSelectedItem().equals("Mobile Money"))
                  {
                     cash.setAccount("Mobile Money");
                     cash.setTxCode(16);
-                    cash.setChequeNumber(txt_chequeNumber.getText());
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
-                 else
+                 else if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
                  {
-                    //assume cash account
-                    cash.setAccount("Cash");
-                    cash.setTxCode(4);
+                    cash.setAccount("Direct Transfer");
+                    cash.setTxCode(17);
+                    //cash.setChequeNumber(txt_chequeNumber.getText());
                     cash.setTxType("CR");
                  }
                  cashList.add(cash);

@@ -32,12 +32,18 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Product;
+import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.dao.InvoicePrinter;
 import org.lown.consultancy.accounts.dao.ProductService;
 import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ItemListTable;
+import org.lown.consultancy.accounts.tables.PurchasesList;
+import org.lown.consultancy.accounts.tables.PurchasesTransactions;
+import org.lown.consultancy.accounts.tables.SupplierList;
+import org.lown.consultancy.accounts.tables.TransactionsTable;
 
 /**
  *
@@ -226,6 +232,7 @@ public class SalesDialog extends JPanel implements ActionListener{
         txDueDatePicker.setDate(new Date());
         txDueDatePicker.setFormats(new String[] { "dd-MMM-yyyy" });
         txDueDatePicker.setBounds(170, 120, 150, 20);
+        txDueDatePicker.setEditable(false);
         pTransaction.add(txDueDatePicker);
         
         dlgTransaction.add(pTransaction);//add the invoice details panel
@@ -673,6 +680,8 @@ public class SalesDialog extends JPanel implements ActionListener{
         dlgTransaction.add(btnDelete);
         
         dlgTransaction.getRootPane().setDefaultButton(btnPostTx);
+        
+        displayInvoice();
         dlgTransaction.setVisible(true);          
         dlgTransaction.dispose(); //close the app once done
     }
@@ -742,6 +751,11 @@ public class SalesDialog extends JPanel implements ActionListener{
             if (btnPostTx.getText().equalsIgnoreCase("Add Transaction"))
             {
                  JOptionPane.showMessageDialog(null, "Click Add Transaction Button First, then proceed...");
+                 return;
+            }
+            if (txDatePicker.getDate().compareTo(new Date())>0)
+            {
+                 JOptionPane.showMessageDialog(null, "The Invoice Date should be greater than the current Date...");
                  return;
             }
             
@@ -923,14 +937,6 @@ public class SalesDialog extends JPanel implements ActionListener{
     private void postTransaction()
     {
         txPosted=false;
-        //check if there is any record to post
-        List<SalesItem> itemsList=itemListTable.getSalesItemList();
-        if (itemsList.isEmpty())
-        {
-            JOptionPane.showMessageDialog(null, "No Items are available on the Till to be Posted...");
-            return;
-        }
-        
         
         if (cbo_salesRep.getSelectedItem().equals("Select"))
         {
@@ -943,6 +949,17 @@ public class SalesDialog extends JPanel implements ActionListener{
             JOptionPane.showMessageDialog(null, "Enter The Credit days then proceed...");
             return; 
         }
+        
+        //check if there is any record to post
+        List<SalesItem> itemsList=itemListTable.getSalesItemList();
+        if (itemsList.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "No Items are available on the Till to be Posted...");
+            return;
+        }
+        
+        
+        
             
         /*
                 * Start by checking the type of Transaction
@@ -1049,7 +1066,7 @@ public class SalesDialog extends JPanel implements ActionListener{
                     invoicePrinter.generateInvoice(salesTx, itemsList);
                     
                     //Update customer dashboard
-                    updateCustomerDassboard();
+                    updateCustomerDashboard();
                     //close dialog
                     dlgTransaction.setVisible(false);
                      return;
@@ -1065,7 +1082,7 @@ public class SalesDialog extends JPanel implements ActionListener{
                     txPosted=true;
                     
                     //Update customer dashboard
-                    updateCustomerDassboard();
+                    updateCustomerDashboard();
                     //close dialog
                     dlgTransaction.setVisible(false);
                 }
@@ -1091,8 +1108,44 @@ public class SalesDialog extends JPanel implements ActionListener{
         } 
     }
     
+    private void displayInvoice()
+    {
+        if (CustomerListTable.selectedCustomer!=null && TransactionsTable.selectedInvoice!=null)
+         {
+             itemListTable.displayInvoice(CustomerListTable.selectedCustomer, TransactionsTable.selectedInvoice);
+             List<SalesItem> itemsList=itemListTable.getSalesItemList();
+             SalesTransaction salesTx=new SalesTransaction();
+             salesTx=salesService.getTransactionsById(CustomerListTable.selectedCustomer, TransactionsTable.selectedInvoice);
+             for(SalesItem s:itemsList)
+             {
+                totalDiscount=totalDiscount+s.getDiscount();
+         
+             }
+             txt_total.setText(df.format(salesTx.getTxSalesAmount()));
+             txt_discount.setText(df.format(totalDiscount));
+             
+             txDatePicker.setDate(salesTx.getTxSalesDate());
+             txDueDatePicker.setDate(salesTx.getTxSalesDueDate());
+             //txt_txNumber.setText(PurchasesList.purchasesItemList2.get(0).getInvoiceNumber());
+             if(salesTx.isPaid())
+             {
+                txt_payment.setText(df.format(salesTx.getTxSalesAmount()));
+             }
+             else
+             {
+                 txt_balance.setText(df.format(salesTx.getTxSalesAmount()));
+             }
+            
+             
+             btnAdd.setEnabled(false);
+             btnDelete.setEnabled(false);
+             btnPostTx.setEnabled(false);
+             btnPrintInvoice.setEnabled(false);
+         }
+     
+    }
     
-    private void updateCustomerDassboard()
+    private void updateCustomerDashboard()
     {
         double totalSales=salesService.getTotalSalesByCustomerId(selectedCustomer.getCustomer_id());
         double totalCash=salesService.getTotalCashByCustomerId(selectedCustomer.getCustomer_id());

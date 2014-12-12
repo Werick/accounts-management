@@ -33,6 +33,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dialog.PurchasesDialog;
+import org.lown.consultancy.accounts.dialog.SalesDialog;
 
 /**
  *
@@ -47,6 +49,7 @@ public class TransactionsTable extends JPanel{
     private List<SalesTransaction> transactions;    
     private SalesService ss;
     public static SalesTransaction selectedTx;
+    public static Integer selectedInvoice;
     private DecimalFormat df = new DecimalFormat("#0.00");
     private JCheckBox checkBox = new JCheckBox();
     public TransactionsTable()
@@ -102,9 +105,14 @@ public class TransactionsTable extends JPanel{
             @Override
                     public void mouseClicked(MouseEvent e)
                     {
-                        if (e.getClickCount() == 1)// use 2 for a double click use 1 for a single click
+                        if (e.getClickCount() == 2)// use 2 for a double click use 1 for a single click
                         {
-                            System.out.println(" Single click" );
+                            System.out.println(" Double click" );
+                            if (selectedInvoice!=null)
+                            {
+                                SalesDialog.createAndShowGUI(CustomerListTable.selectedCustomer);
+                            }
+                            
                         }
                     }
         } );
@@ -143,6 +151,7 @@ public class TransactionsTable extends JPanel{
                                 System.out.println(String.format("Selected Row in view:  " + data.toString()));
                             
                                 //selectedCustomer=cs.getCustomerByNumber(data.toString()); 
+                                selectedInvoice=Integer.parseInt(data.toString());
                                 
                            }
                            catch(java.lang.ArrayIndexOutOfBoundsException ex)

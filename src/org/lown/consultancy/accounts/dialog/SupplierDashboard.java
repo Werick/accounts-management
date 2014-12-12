@@ -24,6 +24,7 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.dao.PurchasesService;
 import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.tables.PurchasesList;
 import org.lown.consultancy.accounts.tables.PurchasesTransactions;
 import org.lown.consultancy.accounts.tables.SupplierList;
 
@@ -109,6 +110,9 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         totalPayments=0.0;
         ss=new SalesService();
         ps=new PurchasesService();
+        
+        SupplierList.selectedSupplier=null;
+        PurchasesTransactions.selectedInvoice=null;
         
         dlgsupplierDashboard= new JDialog((JDialog)null, "Supplier Center", true);
         dlgsupplierDashboard.setLayout(null);
@@ -479,7 +483,8 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         {
             if(SupplierList.selectedSupplier!=null)
             {
-               PurchasesDialog.createAndShowGUI(SupplierList.selectedSupplier);  
+                PurchasesTransactions.selectedInvoice=null;
+                PurchasesDialog.createAndShowGUI(SupplierList.selectedSupplier);  
             }
             else
             {
@@ -494,9 +499,8 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         }
         else if(e.getActionCommand().equals(ACT_EDIT))
         {
-            if(SupplierList.selectedSupplier!=null)
-            {
-//               CustomerDialog customerDialog=new CustomerDialog();
+            if(SupplierList.selectedSupplier!=null)            {
+             
                 SupplierDialog.createAndShowGUI();
                 return;
             }
@@ -515,51 +519,7 @@ public class SupplierDashboard extends JPanel implements ActionListener{
               //load registration form              
               SupplierDialog.createAndShowGUI();
 	}
-//        else if(e.getActionCommand().equals(ACT_VIEW))
-//        {
-//            if (supplierListTable.getRowCount()==0)
-//            {
-//                    return;
-//            }
-//            else
-//             {                    
-//                 //Should Load the Supplier Dash Board
-//                 if(SupplierList.selectedSupplier!=null)
-//                 {
-//                    //Should Load the Autofill the supplier Dash Board                    
-//                    txt_supplierName.setText(SupplierList.selectedSupplier.getSupplierName());
-//                    txt_supplierNumber.setText(SupplierList.selectedSupplier.getSupplierNumber());
-//                    txt_phone.setText(SupplierList.selectedSupplier.getPhone());
-//                    txt_address.setText(SupplierList.selectedSupplier.getAddress());
-//                    txt_contact.setText(SupplierList.selectedSupplier.getContactPerson());
-//                    //SalesDialog.createAndShowGUI(CustomerListTable.selectedCustomer); 
-//                    txListTable.insertRow(SupplierList.selectedSupplier);
-//                    try
-//                    {
-//                        totalPurchases=ps.getTotalPurchasesBySupplierId(SupplierList.selectedSupplier.getSupplier_id());
-//                        totalPayments=ps.getTotalPaymentsBySupplierId(SupplierList.selectedSupplier.getSupplier_id());
-//                        balance=totalPurchases-totalPayments;
-//                        txt_totalPurchases.setText(df.format(totalPurchases));
-//                        if (balance>=0)
-//                        {
-//                            txt_balance.setText(df.format(balance));
-//                        }
-//                        else
-//                        {                        
-//                            txt_balance.setText("("+df.format(balance)+")");  
-//                        }
-//                    }
-//                    catch(Exception ex)
-//                    {
-//                        //ignore error
-//                    }
-//                    
-//                    
-//                 }
-//                    
-//                }
-//            return;
-//	}
+
         
         
     }
@@ -577,6 +537,8 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         txListTable.insertRow(SupplierList.selectedSupplier, startDate, endDate);
         System.out.println("Start Date: "+startDate+"\t End Date:"+endDate);
     }
+    
+   
     
     private void clearText()
     {

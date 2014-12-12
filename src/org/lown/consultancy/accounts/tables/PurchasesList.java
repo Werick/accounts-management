@@ -6,6 +6,8 @@ package org.lown.consultancy.accounts.tables;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,10 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Purchase;
+import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dialog.PurchasesDialog;
 
 /**
  *
@@ -36,15 +41,17 @@ import org.lown.consultancy.accounts.dao.ProductService;
  */
 public class PurchasesList extends JPanel{
     private JTable jTable;
-    private String[] columnTitle=new String[]{"Qty","Code","Description","Net Price","VAT","Amount"};
+    private String[] columnTitle=new String[]{"Qty","Code","Description","Unit Price","Net Price","VAT","Amount"};
     private static DefaultTableModel model ;
     private Object[][] data; 
-    private ProductService ps;
+    private PurchasesService ps;
     private List<Product> productList;
     public static Product selectedProduct;
     private List<Purchase> purchasesItemList;
+    public static List<Purchase> purchasesItemList2;
     private static DecimalFormat df = new DecimalFormat("#0.00");
     public static double selectedAmount,selectedVat,selectedNet;
+    public static String selectedInvoice;
     public static int selectedRowIndex;
     
     private Map<String,Integer>categoryList;    
@@ -96,10 +103,24 @@ public class PurchasesList extends JPanel{
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
         jTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);//Qty
-        jTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);//net amount
-        jTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);//vat
-        jTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);//Amount
+        jTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);//unit price
+        jTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);//net amount
+        jTable.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);//vat
+        jTable.getColumnModel().getColumn(6).setCellRenderer(rightRenderer);//Amount
        
+        //Mouse listener to track a double click
+        jTable.addMouseListener(new MouseAdapter(){
+            @Override
+                    public void mouseClicked(MouseEvent e)
+                    {
+                        if (e.getClickCount() == 2)// use 2 for a double click use 1 for a single click
+                        {
+                            System.out.println(" Double click" );
+                            PurchasesDialog.createAndShowGUI(SupplierList.selectedSupplier);
+                        }
+                    }
+        } );
+        
         add(scrollPane);
         add(header);
         validate();
@@ -109,6 +130,37 @@ public class PurchasesList extends JPanel{
     {
         return jTable.getRowCount();
     }
+    
+    public void displayInvoice(Supplier s, String Invoicenum)
+    {
+        //remove all rows      
+        model.getDataVector().removeAllElements();
+        jTable.repaint();   
+        ps=new PurchasesService();
+        purchasesItemList2 = null;
+        if(ps.getPurchasesBySupplierId(s.getSupplier_id(), Invoicenum) !=null)
+        {
+            purchasesItemList2=ps.getPurchasesBySupplierId(s.getSupplier_id(), Invoicenum);
+        }
+        
+        if (!purchasesItemList2.isEmpty())
+        {
+            for(Purchase purchaseItem:purchasesItemList2)
+            {
+                //Insert Item in the List
+                if(purchaseItem!=null)
+                {
+                    purchaseItem.setProduct(productService.getProductById(purchaseItem.getProduct().getProduct_id()));
+                    System.out.println("Invoice Number "+purchaseItem.getInvoiceNumber());            
+                    model.insertRow(jTable.getRowCount(),new Object[]{purchaseItem.getQty(),purchaseItem.getProduct().getProductCode(),purchaseItem.getProduct().getProductName(),df.format(purchaseItem.getUnitPrice()) ,df.format(purchaseItem.getNetAmount()),df.format(purchaseItem.getVat()),df.format(purchaseItem.getAmount())});
+                    //model.isCellEditable(jTable.getRowCount(), 6)=isCellEditable(jTable.getRowCount(), 6); 
+                }
+            }
+        }
+        
+
+    }
+    
     public void insertRow(Purchase purchaseItem)
     {
         //remove all rows      
@@ -118,7 +170,7 @@ public class PurchasesList extends JPanel{
         if(purchaseItem!=null)
          {
             //System.out.println("Testing Stuff"+p.getCustomerNumber());            
-            model.insertRow(jTable.getRowCount(),new Object[]{purchaseItem.getQty(),purchaseItem.getProduct().getProductCode(),purchaseItem.getProduct().getProductName(),df.format(purchaseItem.getNetAmount()),df.format(purchaseItem.getVat()),df.format(purchaseItem.getAmount())});
+            model.insertRow(jTable.getRowCount(),new Object[]{purchaseItem.getQty(),purchaseItem.getProduct().getProductCode(),purchaseItem.getProduct().getProductName(),df.format(purchaseItem.getUnitPrice()) ,df.format(purchaseItem.getNetAmount()),df.format(purchaseItem.getVat()),df.format(purchaseItem.getAmount())});
             //model.isCellEditable(jTable.getRowCount(), 6)=isCellEditable(jTable.getRowCount(), 6); 
           }
 
@@ -139,14 +191,16 @@ public class PurchasesList extends JPanel{
             System.out.println("Current Rows  Number : " + i);//comment if not debugging
             Object qty=model.getValueAt(i, 0);//quantity
             Object code=model.getValueAt(i, 1);//product code
-            Object netAmt=model.getValueAt(i, 3);//net price
-            Object vat=model.getValueAt(i, 4);//Vat awarded
-            Object amt=model.getValueAt(i, 5);// amount
+            Object unitprice=model.getValueAt(i, 3);// unit price
+            Object netAmt=model.getValueAt(i, 4);//net price
+            Object vat=model.getValueAt(i, 5);//Vat awarded
+            Object amt=model.getValueAt(i, 6);// amount
             
-            ps=new ProductService();
-            Product product=ps.getProductByCode(code.toString());
+            productService=new ProductService();
+            Product product=productService.getProductByCode(code.toString());
             purchaseItem=new Purchase();
             purchaseItem.setQty(Integer.parseInt(qty.toString()));
+            purchaseItem.setUnitPrice(Double.parseDouble(unitprice.toString()));
             purchaseItem.setAmount(Double.parseDouble(amt.toString()));
             purchaseItem.setNetAmount(Double.parseDouble(netAmt.toString()));
             purchaseItem.setVat(Double.parseDouble(vat.toString()));
@@ -168,6 +222,7 @@ public class PurchasesList extends JPanel{
                        if ((selectedRow>=0)&&(jTable.getRowCount()>selectedRow))
                        {
                             Object data = model.getValueAt(selectedRow, 5);
+                            Object invoicenum = model.getValueAt(selectedRow, 0);
                             Object vat = model.getValueAt(selectedRow, 4);
                             Object net = model.getValueAt(selectedRow, 3);
                             int modelRow = jTable.convertRowIndexToModel(selectedRow);
@@ -177,7 +232,7 @@ public class PurchasesList extends JPanel{
                             selectedAmount=Double.parseDouble(data.toString());     
                             selectedVat=Double.parseDouble(vat.toString()); 
                             selectedNet=Double.parseDouble(net.toString());     
-                            
+                            selectedInvoice=invoicenum.toString();
                        }
                    }
                    

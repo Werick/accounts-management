@@ -17,6 +17,7 @@ public class Purchase {
     private int qty;
     private double vat;
     private double amount;
+    private double unitPrice;
     private double balance;
     private double allocation;
     private double netAmount;
@@ -137,6 +138,14 @@ public class Purchase {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
     
     

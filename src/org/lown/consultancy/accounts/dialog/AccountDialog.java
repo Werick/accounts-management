@@ -21,12 +21,7 @@ import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
-import org.lown.consultancy.accounts.Category;
-import org.lown.consultancy.accounts.Product;
-import org.lown.consultancy.accounts.Stock;
 import org.lown.consultancy.accounts.dao.CompanyService;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.tables.ProductListTable;
 
 /**
  *
@@ -220,7 +215,8 @@ public class AccountDialog extends JPanel implements ActionListener{
                     cashTx.setAmount(Double.parseDouble(txt_openBalance.getText()));
                 }   
                 cashTx.setTxType("DR");
-                cashTx.setDate(new java.util.Date());
+                cashTx.setDate(new java.util.Date());               
+                cashTx.setAccount(cbo_category.getSelectedItem().toString());
                     
                 try {
                      cs.saveAccount(account,cashTx);
