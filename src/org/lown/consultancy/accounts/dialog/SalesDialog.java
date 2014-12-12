@@ -34,9 +34,9 @@ import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.SalesTransaction;
-import org.lown.consultancy.accounts.api.InvoicePrinter;
-import org.lown.consultancy.accounts.api.ProductService;
-import org.lown.consultancy.accounts.api.SalesService;
+import org.lown.consultancy.accounts.dao.InvoicePrinter;
+import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.SalesService;
 import org.lown.consultancy.accounts.tables.ItemListTable;
 
 /**

@@ -18,7 +18,7 @@ import javax.swing.event.DocumentListener;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.api.ProductService;
+import org.lown.consultancy.accounts.dao.ProductService;
 import org.lown.consultancy.accounts.tables.StockItemTable;
 
 /**

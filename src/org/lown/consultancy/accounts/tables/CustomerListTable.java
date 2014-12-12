@@ -21,8 +21,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
-import org.lown.consultancy.accounts.api.CustomerService;
-import org.lown.consultancy.accounts.api.SalesService;
+import org.lown.consultancy.accounts.dao.CustomerService;
+import org.lown.consultancy.accounts.dao.SalesService;
 import org.lown.consultancy.accounts.dialog.CustomerDashboard;
 
 

@@ -30,8 +30,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.api.ProductService;
-import org.lown.consultancy.accounts.api.StockService;
+import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.StockService;
 
 /**
  *

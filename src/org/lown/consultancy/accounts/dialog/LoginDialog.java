@@ -16,7 +16,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.api.UserService;
+import org.lown.consultancy.accounts.dao.UserService;
 
 /**
  *

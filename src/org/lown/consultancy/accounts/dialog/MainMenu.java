@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.api.CompanyService;
-import org.lown.consultancy.accounts.api.PDFWriter;
-import org.lown.consultancy.accounts.api.StockService;
+import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.PDFWriter;
+import org.lown.consultancy.accounts.dao.StockService;
 
 /**
  *

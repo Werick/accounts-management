@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.api.SupplierService;
+import org.lown.consultancy.accounts.dao.SupplierService;
 import org.lown.consultancy.accounts.tables.SupplierList;
 
 /**

@@ -24,8 +24,8 @@ import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Category;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.api.CompanyService;
-import org.lown.consultancy.accounts.api.ProductService;
+import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.ProductService;
 import org.lown.consultancy.accounts.tables.ProductListTable;
 
 /**

@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
-import org.lown.consultancy.accounts.api.CustomerService;
+import org.lown.consultancy.accounts.dao.CustomerService;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 
 /**

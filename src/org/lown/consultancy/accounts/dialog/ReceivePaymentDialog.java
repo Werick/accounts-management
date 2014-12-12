@@ -30,8 +30,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.SalesTransaction;
-import org.lown.consultancy.accounts.api.CompanyService;
-import org.lown.consultancy.accounts.api.SalesService;
+import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.SalesService;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.InvoiceList;
 

@@ -24,8 +24,8 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
-import org.lown.consultancy.accounts.api.CashService;
-import org.lown.consultancy.accounts.api.CompanyService;
+import org.lown.consultancy.accounts.dao.CashService;
+import org.lown.consultancy.accounts.dao.CompanyService;
 
 /**
  *

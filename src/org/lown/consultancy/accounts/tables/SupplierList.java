@@ -19,8 +19,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.api.PurchasesService;
-import org.lown.consultancy.accounts.api.SupplierService;
+import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dao.SupplierService;
 import org.lown.consultancy.accounts.dialog.SupplierDashboard;
 
 /**

@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
-import org.lown.consultancy.accounts.api.CategoryService;
+import org.lown.consultancy.accounts.dao.CategoryService;
 import org.lown.consultancy.accounts.tables.CategoryListTable;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ProductListTable;
