@@ -53,7 +53,7 @@ public class CategoryListTable extends JPanel {
         JScrollPane scrollPane = new JScrollPane(jTable);
         jTable.setFillsViewportHeight(true);
         JTableHeader header = jTable.getTableHeader();
-        //getSelectedRow();
+        getSelectedRow();
         setPreferredSize(new Dimension(400, 200));       
         jTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
         

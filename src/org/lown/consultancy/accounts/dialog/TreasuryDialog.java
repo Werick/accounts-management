@@ -39,7 +39,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
     
     private static final String ACT_BANK="manage_Bank";    ;
     private static final String ACT_SOURCE="source_account";  
-    private static final String ACT_DESTINATION="destination_account";  
+    private static final String ACT_PETTYCASH="petty_account";  
+    private static final String ACT_CONTRA="contra_accounts";  
     private static final String ACT_BACK="close";
     private static final String ACT_TRANSFER="transfer_money";
     public static final Font titleFont = new Font("Times New Roman", Font.BOLD, 14);
@@ -48,6 +49,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
     private static JDialog dlgTreasury;
     
     private JButton btnBank;
+    private JButton btnContra;
+    private JButton btnExpenses;
     private JButton btnTransfer;
     private JButton btnClose;
     private JButton btnUpdate;
@@ -210,13 +213,25 @@ public class TreasuryDialog extends JPanel implements ActionListener{
         dlgTreasury.add(btnBank);    
         
         btnTransfer=new JButton("Reconcile Accounts");
-        btnTransfer.setBounds(20, 150, 150, 50);
+        btnTransfer.setBounds(20, 120, 150, 50);
         btnTransfer.setActionCommand(ACT_TRANSFER);
         btnTransfer.addActionListener(this);
-        dlgTreasury.add(btnTransfer);    
+        dlgTreasury.add(btnTransfer); 
+        
+        btnContra=new JButton("Contra Accounts");
+        btnContra.setBounds(20, 190, 150, 50);
+        btnContra.setActionCommand(ACT_CONTRA);
+        btnContra.addActionListener(this);
+        dlgTreasury.add(btnContra); 
+        
+        btnExpenses=new JButton("Petty Cash");
+        btnExpenses.setBounds(20, 260, 150, 50);
+        btnExpenses.setActionCommand(ACT_PETTYCASH);
+        btnExpenses.addActionListener(this);
+        dlgTreasury.add(btnExpenses); 
         
         btnClose=new JButton("Back");
-        btnClose.setBounds(20, 250, 150, 50);
+        btnClose.setBounds(20, 330, 150, 50);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
         dlgTreasury.add(btnClose);
@@ -230,9 +245,19 @@ public class TreasuryDialog extends JPanel implements ActionListener{
             dlgTreasury.setVisible(false);
             return;
 	}
+        else  if(e.getActionCommand().equals(ACT_PETTYCASH))
+        {
+            ContraExpensesDialog.createAndShowGUI(); 
+            return;
+	}
         else  if(e.getActionCommand().equals(ACT_BANK))
         {
             AccountDialog.createAndShowGUI(); 
+            return;
+	}
+        else  if(e.getActionCommand().equals(ACT_CONTRA))
+        {
+            ContraAccountsDialog.createAndShowGUI(); 
             return;
 	}
         else if(e.getActionCommand().equals(ACT_SOURCE))

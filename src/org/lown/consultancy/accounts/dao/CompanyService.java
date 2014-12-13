@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
+import org.lown.consultancy.accounts.ContraAccount;
 import org.lown.consultancy.accounts.Sql;
 import org.lown.consultancy.accounts.dialog.MainMenu;
 
@@ -88,6 +89,7 @@ public class CompanyService {
                 account.setAccount_balance(rs.getDouble("account_balance"));
                 account.setOpen_balance(rs.getDouble("open_balance"));                
             }
+            rs.close();
         }
         catch (SQLException e) 
          {
@@ -132,6 +134,7 @@ public class CompanyService {
                 account.setOpen_balance(rs.getDouble("open_balance"));   
                 accountList.add(account);
             }
+            rs.close();
         }
         catch (SQLException e) 
          {
@@ -174,6 +177,7 @@ public class CompanyService {
                 account.setAccount_balance(rs.getDouble("account_balance"));
                 account.setOpen_balance(rs.getDouble("open_balance"));                
             }
+            rs.close();
         }
         catch (SQLException e) 
          {
@@ -192,7 +196,87 @@ public class CompanyService {
         return account;
     }
     
-     public List<Account> getAccountByName(String search)
+    public ContraAccount getContraAccountById(int id)
+    {
+        ContraAccount account=new ContraAccount();
+        
+        try
+        {
+            //log info
+            
+            String sqlStmt="Select contra_id,contra_name,contra_descr ";
+            sqlStmt+=" from contra WHERE voided=0 and contra_id="+id;
+            
+          
+            AccountsManagement.logger.info("Executing Query: " + sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())           
+            {                
+                account.setContra_id(rs.getInt("contra_id"));  
+                account.setContraName(rs.getString("contra_name"));       
+                account.setContraDescription(rs.getString("contra_descr"));                
+                
+            }
+            rs.close();
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+//        finally
+//        {
+//          Sql.Close();//close open connection 
+//        }
+	
+         
+        return account;
+    }
+    
+    public ContraAccount getContraAccountByName(String name)
+    {
+        ContraAccount account=new ContraAccount();
+        
+        try
+        {
+            //log info
+            
+            String sqlStmt="Select contra_id,contra_name,contra_descr ";
+            sqlStmt+=" from contra WHERE voided=0 and contra_name='"+name+"'";
+            
+          
+            AccountsManagement.logger.info("Executing Query: " + sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())           
+            {                
+                account.setContra_id(rs.getInt("contra_id"));  
+                account.setContraName(rs.getString("contra_name"));       
+                account.setContraDescription(rs.getString("contra_descr"));                
+                
+            }
+            rs.close();
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+//        finally
+//        {
+//          Sql.Close();//close open connection 
+//        }
+	
+         
+        return account;
+    }
+     
+    public List<Account> getAccountByName(String search)
     {
         List<Account> accountList=new ArrayList<Account>();
         
@@ -220,6 +304,7 @@ public class CompanyService {
                 account.setOpen_balance(rs.getDouble("open_balance")); 
                 accountList.add(account);
             }
+            rs.close();
         }
         catch (SQLException e) 
          {
@@ -236,6 +321,7 @@ public class CompanyService {
 	 
         return accountList;
     }
+    
     
     public List<Account> getAllAccounts()
     {
@@ -263,6 +349,47 @@ public class CompanyService {
                 account.setOpen_balance(rs.getDouble("open_balance")); 
                 accountList.add(account);
             }
+            rs.close();
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+//        finally
+//        {
+//            Sql.Close();//close open connection
+//        }
+	 
+        return accountList;
+    }
+    
+    public List<ContraAccount> getAllContraAccounts()
+    {
+        List<ContraAccount> accountList=new ArrayList<ContraAccount>();        
+        
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Get List of All products... ");
+            String sqlStmt="Select contra_id,contra_name,contra_descr ";
+            sqlStmt+=" from contra WHERE voided=0;";
+            
+          
+            AccountsManagement.logger.info("Executing Query: " + sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                ContraAccount account = new ContraAccount();
+                account.setContra_id(rs.getInt("contra_id"));  
+                account.setContraName(rs.getString("contra_name"));       
+                account.setContraDescription(rs.getString("contra_descr"));                
+                accountList.add(account);
+            }
+            rs.close();
         }
         catch (SQLException e) 
          {
@@ -349,6 +476,51 @@ public class CompanyService {
 //         }
     }
     
+    public void saveContraAccount(ContraAccount account) throws SQLException
+    {
+        try
+        {
+           
+            
+            Sql.getConnection().setAutoCommit(false) ;
+            preppedStmtInsert="INSERT INTO contra (contra_name,contra_descr,dateCreated,createdby) VALUES(?,?,?,?)";
+            PreparedStatement pst=Sql.getConnection().prepareStatement(preppedStmtInsert,Sql.createStatement().RETURN_GENERATED_KEYS);
+            pst.setString(1, account.getContraName());
+            pst.setString(2, account.getContraDescription());            
+            pst.setTimestamp(3, Sql.getCurrentTimeStamp());
+            pst.setInt(4, MainMenu.gUser.getUserId());            
+            pst.execute();
+            
+            int autoIncKeyFromApi = -1; 
+            ResultSet rs = pst.getGeneratedKeys(); 
+            if (rs.next()) 
+            {
+                    autoIncKeyFromApi = rs.getInt(1);
+                    //System.out.println("Key returned from getGeneratedKeys():" + autoIncKeyFromApi);
+            } 
+            else 
+            {
+                    // throw an exception from here
+            }
+            rs.close(); 
+            rs = null; 
+            System.out.println("Key returned from getGeneratedKeys():"   + autoIncKeyFromApi);               
+            account.setContra_id(autoIncKeyFromApi);    
+            
+            Sql.getConnection().commit();
+            JOptionPane.showMessageDialog(null, "New Account Record Added...");
+        }
+        catch (SQLException e) 
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            //Log error
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+            Sql.getConnection().rollback();
+         }
+
+    }
      public void saveOpenBalance(Cash cashTx) throws SQLException
     {
         try
@@ -397,7 +569,7 @@ public class CompanyService {
              //log info
              AccountsManagement.logger.info("Updating Account Details... ");
              //create a prepared statement
-             preppedStmtUpdate="update account set account_name=?,account_number=?,branch=?, bank=?, open_balance=?, datechanged=?, changedBy=? category=? WHERE account_id=?";
+             preppedStmtUpdate="update account set account_name=?,account_number=?,branch=?, bank=?, open_balance=?, datechanged=?, changedBy=?, category=? WHERE account_id=?";
             //System.out.println("Check if db print has data: "+ p.getlMiddleFmd());
             //using Transactions to ensure successfull update
             Sql.getConnection().setAutoCommit(false) ;
@@ -412,6 +584,43 @@ public class CompanyService {
             pst.setInt(7, MainMenu.gUser.getUserId());
             pst.setString(8, account.getCategory()); 
             pst.setInt(9, account.getAccount_id());
+            pst.executeUpdate(); 
+            Sql.getConnection().commit(); //commit transaction if successful
+            JOptionPane.showMessageDialog(null, "Record Updated...");
+         }
+         catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            //Log error
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+            Sql.getConnection().rollback();
+         }
+//         finally
+//         {
+//             Sql.Close();
+//         }
+    }
+    
+    public void updateContraAccount(ContraAccount account) throws SQLException
+    {
+         try
+         {
+             //log info
+             AccountsManagement.logger.info("Updating Contra Account Details... ");
+             //create a prepared statement
+             preppedStmtUpdate="update contra set contra_name=?,contra_descr=?, datechanged=?, changedBy=? WHERE contra_id=?";
+            //System.out.println("Check if db print has data: "+ p.getlMiddleFmd());
+            //using Transactions to ensure successfull update
+            Sql.getConnection().setAutoCommit(false) ;
+            PreparedStatement pst= Sql.getConnection().prepareStatement(preppedStmtUpdate);
+           
+            pst.setString(1, account.getContraName());   
+            pst.setString(2, account.getContraDescription());          
+            pst.setTimestamp(3, Sql.getCurrentTimeStamp());
+            pst.setInt(4, MainMenu.gUser.getUserId());           
+            pst.setInt(5, account.getContra_id());
             pst.executeUpdate(); 
             Sql.getConnection().commit(); //commit transaction if successful
             JOptionPane.showMessageDialog(null, "Record Updated...");
