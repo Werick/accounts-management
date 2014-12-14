@@ -28,13 +28,13 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class SalesService {
+public class SalesDAO {
     
    
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     //private Sql Sql;
-    public SalesService()
+    public SalesDAO()
     {
        //Sql=new Sql();
     }

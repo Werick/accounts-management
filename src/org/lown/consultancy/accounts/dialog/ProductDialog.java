@@ -21,7 +21,7 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
 import org.lown.consultancy.accounts.tables.ProductListTable;
 
 /**
@@ -61,7 +61,7 @@ public class ProductDialog extends JPanel implements ActionListener{
     
     private static JDialog dlgProduct;
     private static ProductListTable productListTable;
-    private static ProductService productService;   
+    private static ProductDAO productService;   
     private static Product product;
     private static Stock stock;
     private static Map<Integer,Category> productCategoryMap;
@@ -75,7 +75,7 @@ public class ProductDialog extends JPanel implements ActionListener{
         dlgProduct.setSize(650, 300);//Width size, Height size
         dlgProduct.setLocationRelativeTo(null);//center the invoice on the screen
         
-        productService=new ProductService();
+        productService=new ProductDAO();
         productCategoryMap=productService.getProductCategoryMap();
         categoryList=productService.getCategoryMap();
         
@@ -258,7 +258,7 @@ public class ProductDialog extends JPanel implements ActionListener{
                 if(validateInput())
                 {
                     product=new Product();
-                    productService=new ProductService();
+                    productService=new ProductDAO();
                     product.setProductCode(txt_productCode.getText());
                     product.setProductName(txt_productName.getText());
                     Integer selCategory=(Integer)categoryList.get(cbo_productCategory.getSelectedItem());
@@ -318,7 +318,7 @@ public class ProductDialog extends JPanel implements ActionListener{
                 {
                     if (product!=null)
                     {
-                        productService=new ProductService();
+                        productService=new ProductDAO();
                         product.setProductCode(txt_productCode.getText());
                         product.setProductName(txt_productName.getText());
                         Integer selCategory=(Integer)categoryList.get(cbo_productCategory.getSelectedItem());

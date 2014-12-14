@@ -18,7 +18,7 @@ import javax.swing.event.DocumentListener;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
 import org.lown.consultancy.accounts.tables.StockItemTable;
 
 /**
@@ -33,7 +33,7 @@ public class StockItemDialog extends JPanel implements ActionListener{
     
     private static JDialog dlgStockItem;
     private static StockItemTable stockListTable;
-    private static ProductService productService;   
+    private static ProductDAO productService;   
     private static Product product;
     private static Stock stock;
     private Map<String,Integer>categoryList;
@@ -50,7 +50,7 @@ public class StockItemDialog extends JPanel implements ActionListener{
     public StockItemDialog()
     {
          AccountsManagement.logger.info("Creating Manage Stock UI...");        
-         productService=new ProductService();
+         productService=new ProductDAO();
          categoryList=productService.getCategoryMap();
         
         dlgStockItem= new JDialog((JDialog)null, "Stock Items", true);

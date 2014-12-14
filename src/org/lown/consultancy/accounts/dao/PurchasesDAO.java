@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
-import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Purchase;
@@ -26,11 +25,11 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class PurchasesService {
+public class PurchasesDAO {
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     
-    public PurchasesService()
+    public PurchasesDAO()
     {
         
     }
@@ -480,7 +479,7 @@ public List<Purchase> getPurchasesBySupplierId(int id, String invoicenum)
         try
         {
             //log info
-            ProductService ps=new ProductService();
+            ProductDAO ps=new ProductDAO();
             AccountsManagement.logger.info("Getting Category Details given the internal DB id... ");
             String sqlStmt="Select purchase_id,quantity,pdate,netamount, vat, amount, unitprice,product_id,duedate, ";
             sqlStmt+="if(paid=0,false,true) as paid, invoicenum, supplier_id "; 

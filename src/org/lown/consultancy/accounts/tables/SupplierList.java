@@ -19,8 +19,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.PurchasesService;
-import org.lown.consultancy.accounts.dao.SupplierService;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.SupplierDAO;
 import org.lown.consultancy.accounts.dialog.SupplierDashboard;
 
 /**
@@ -34,15 +34,15 @@ public class SupplierList extends JPanel{
     private static DefaultTableModel model ;
     private Object[][] data;
     private List<Supplier> findList;    
-    private SupplierService ss;
-    private PurchasesService ps;
+    private SupplierDAO ss;
+    private PurchasesDAO ps;
     public static Supplier selectedSupplier;
     
     public SupplierList()            
     {
         AccountsManagement.logger.info("Creating Supplier Table UI...");
-        ss=new SupplierService();
-        ps=new PurchasesService();
+        ss=new SupplierDAO();
+        ps=new PurchasesDAO();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){
             public boolean isCellEditable(int rowIndex, int colIndex) {

@@ -32,8 +32,8 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.PurchasesService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.dialog.PurchasesDialog;
 
 /**
@@ -47,8 +47,8 @@ public class PurchasesTransactions extends JPanel{
     private static DefaultTableModel model ;
     private Object[][] data;
     private List<Purchase> transactions;    
-    private SalesService ss;
-    private PurchasesService ps;
+    private SalesDAO ss;
+    private PurchasesDAO ps;
     public static Purchase selectedTx;
     private DecimalFormat df = new DecimalFormat("#0.00");
     private JCheckBox checkBox = new JCheckBox();
@@ -57,8 +57,8 @@ public class PurchasesTransactions extends JPanel{
     public PurchasesTransactions()
     {
         AccountsManagement.logger.info("Creating Purchases Transactions Table UI...");
-        ss=new SalesService();
-        ps=new PurchasesService();
+        ss=new SalesDAO();
+        ps=new PurchasesDAO();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){
             public boolean isCellEditable(int rowIndex, int colIndex) {

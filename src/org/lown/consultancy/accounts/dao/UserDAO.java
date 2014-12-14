@@ -18,10 +18,10 @@ import org.lown.consultancy.accounts.User;
  *
  * @author LENOVO USER
  */
-public class UserService {
+public class UserDAO {
     
     //private Sql Sql;
-    public UserService()
+    public UserDAO()
     {
         //Sql=new Sql();
     }

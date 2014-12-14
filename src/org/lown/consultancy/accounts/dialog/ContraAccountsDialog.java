@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.ContraAccount;
-import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
 import org.lown.consultancy.accounts.tables.CategoryListTable;
 import org.lown.consultancy.accounts.tables.ContraAccountTable;
 
@@ -56,11 +56,11 @@ public class ContraAccountsDialog extends JPanel implements ActionListener{
     private TitledBorder titled2 = new TitledBorder("View/Add New Contra Account");
     private TitledBorder titled1 = new TitledBorder("List of Contra Accounts");
     private ContraAccount account;
-    private CompanyService cs;
+    private CompanyDAO cs;
     
     public ContraAccountsDialog()
     {
-        cs=new CompanyService();
+        cs=new CompanyDAO();
         titled2.setTitleFont(titleFont);
         titled1.setTitleFont(titleFont);
         

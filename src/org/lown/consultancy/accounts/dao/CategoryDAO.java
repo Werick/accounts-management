@@ -20,11 +20,11 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class CategoryService {
+public class CategoryDAO {
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     
-    public CategoryService()
+    public CategoryDAO()
     {
        
     }

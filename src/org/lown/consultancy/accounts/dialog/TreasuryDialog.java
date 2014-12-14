@@ -28,8 +28,8 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.CashTransfer;
-import org.lown.consultancy.accounts.dao.CashService;
-import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.CashDAO;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
 
 /**
  *
@@ -71,8 +71,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
     
     private JComboBox cbo_source;
     private JComboBox cbo_destination;
-    private CashService cs;
-    private CompanyService companyService;
+    private CashDAO cashDAO;
+    private CompanyDAO companyService;
     
     
     private TitledBorder titled2 = new TitledBorder("Cash Transfer");
@@ -88,7 +88,7 @@ public class TreasuryDialog extends JPanel implements ActionListener{
         accountMap=new HashMap<String,Integer>();
         accountList=new ArrayList<Account>();
         
-        companyService=new CompanyService();
+        companyService=new CompanyDAO();
         accountList=companyService.getAllAccounts();
         
         dlgTreasury= new JDialog((JDialog)null, "Manage Treasury", true);
@@ -267,8 +267,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
             if (cbo_source.getSelectedIndex()==1)
             {
                 txt_availableAmount.setText("");
-                cs=new CashService();
-                availBalance=cs.getAvailableCashCollection();
+                cashDAO=new CashDAO();
+                availBalance=cashDAO.getAvailableCashCollection();
                 txt_availableAmount.setText(df.format(availBalance));
                 
                
@@ -276,22 +276,22 @@ public class TreasuryDialog extends JPanel implements ActionListener{
             else if (cbo_source.getSelectedIndex()==2)
             {
                 txt_availableAmount.setText("");
-                cs=new CashService();
-                availBalance=cs.getAvailableBankCollection();
+                cashDAO=new CashDAO();
+                availBalance=cashDAO.getAvailableBankCollection();
                 txt_availableAmount.setText(df.format(availBalance));                
             }
             else if (cbo_source.getSelectedIndex()==3)
             {
                 txt_availableAmount.setText("");
-                cs=new CashService();
-                availBalance=cs.getAvailableMobileMoney();
+                cashDAO=new CashDAO();
+                availBalance=cashDAO.getAvailableMobileMoney();
                 txt_availableAmount.setText(df.format(availBalance));              
             }
              else if (cbo_source.getSelectedIndex()>3)
              {
                  //check the indivual accounts using the accounts map
                  
-                 int selAccount=-1;
+                int selAccount=-1;
                 System.out.println("Testing Account Map........");
                 if(!accountMap.isEmpty())
                 {
@@ -299,8 +299,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
                     {
                        selAccount=accountMap.get(cbo_source.getSelectedItem());
                        txt_availableAmount.setText("");
-                       cs=new CashService();
-                       availBalance=cs.getAccountBalanceById(selAccount);
+                       cashDAO=new CashDAO();
+                       availBalance=cashDAO.getAccountBalanceById(selAccount);
                        txt_availableAmount.setText(df.format(availBalance));                     
                     }  
 
@@ -439,8 +439,8 @@ public class TreasuryDialog extends JPanel implements ActionListener{
                 //Transfer Funds
                 try
                 {
-                    cs=new CashService();
-                    cs.transferMoney(sourceAcc, destinationAcc);
+                    cashDAO=new CashDAO();
+                    cashDAO.transferMoney(sourceAcc, destinationAcc);
                     btnUpdate.setText("Start Transfer");
                 }
                 catch(SQLException ex) 

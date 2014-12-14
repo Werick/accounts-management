@@ -21,13 +21,13 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class StockService {
+public class StockDAO {
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     //private Sql Sql;
-    private ProductService ps;
+    private ProductDAO ps;
     
-    public StockService()
+    public StockDAO()
     {
         //Sql=new Sql();
     }
@@ -363,7 +363,7 @@ public class StockService {
         //For successfull streaming a result set must be closed before another statement can be issued
         // Concurrent result sets are not allowed
         Product product=new Product();
-        ps=new ProductService();
+        ps=new ProductDAO();
         try
         {
             //log info

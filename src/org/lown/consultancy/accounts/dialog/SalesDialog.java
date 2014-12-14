@@ -36,8 +36,8 @@ import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.dao.InvoicePrinter;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ItemListTable;
 import org.lown.consultancy.accounts.tables.PurchasesList;
@@ -131,8 +131,8 @@ public class SalesDialog extends JPanel implements ActionListener{
     private Map<String,Integer>categoryList;
     private Map<String,Integer>productList;
     private Map<String,Integer>salesRepList;
-    private ProductService productService; 
-    private SalesService salesService; 
+    private ProductDAO productService; 
+    private SalesDAO salesService; 
     private SalesItem salesItem;
     private double totalAmount;
     private double totalDiscount;
@@ -155,10 +155,10 @@ public class SalesDialog extends JPanel implements ActionListener{
         dlgTransaction.setSize(950, 750);
         dlgTransaction.setLocationRelativeTo(null);//center the Sales tx on the screen
         
-        productService=new ProductService();
+        productService=new ProductDAO();
         categoryList=productService.getCategoryMap();
         
-        salesService=new SalesService();
+        salesService=new SalesDAO();
         salesRepList=salesService.getSalesRepMap();
         
         Map companyDetails=MainMenu.cs.getCompanyDetails();

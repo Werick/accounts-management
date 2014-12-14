@@ -34,8 +34,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
 import org.lown.consultancy.accounts.tables.PurchasesList;
 import org.lown.consultancy.accounts.tables.PurchasesTransactions;
 import org.lown.consultancy.accounts.tables.SupplierList;
@@ -112,8 +112,8 @@ public class PurchasesDialog extends JPanel implements ActionListener{
     
     private Map<String,Integer>categoryList;
     private Map<String,Integer>productList;   
-    private ProductService productService; 
-    private PurchasesService purchasesService ;
+    private ProductDAO productService; 
+    private PurchasesDAO purchasesService ;
     private Purchase purchaseItem;
     private double totalAmount,vatTotal,invoiceTotal;
     private DecimalFormat df = new DecimalFormat("#0.00"); 
@@ -135,8 +135,8 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         dlgPurchase.setSize(950, 750);
         dlgPurchase.setLocationRelativeTo(null);//center the Sales tx on the screen
         
-        purchasesService=new PurchasesService();
-        productService=new ProductService();
+        purchasesService=new PurchasesDAO();
+        productService=new ProductDAO();
         categoryList=productService.getCategoryMap();
         
         pHeader=new JPanel();

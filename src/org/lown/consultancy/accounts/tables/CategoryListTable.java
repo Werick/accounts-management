@@ -18,7 +18,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
-import org.lown.consultancy.accounts.dao.CategoryService;
+import org.lown.consultancy.accounts.dao.CategoryDAO;
 
 /**
  *
@@ -30,14 +30,14 @@ public class CategoryListTable extends JPanel {
     private String[] columnTitle=new String[]{"Category_id","Code","Name"};
     private static DefaultTableModel model ;
     private Object[][] data;   
-    private CategoryService productCategoryService;
+    private CategoryDAO productCategoryService;
     private List<Category> categoryList;
     
     public CategoryListTable()
     {
         AccountsManagement.logger.info("Creating Product Category List Table UI...");
         
-        productCategoryService=new CategoryService();
+        productCategoryService=new CategoryDAO();
         categoryList=productCategoryService.getAllCategories();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){

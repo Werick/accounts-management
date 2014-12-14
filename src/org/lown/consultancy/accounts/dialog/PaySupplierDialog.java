@@ -30,9 +30,9 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.Purchase;
-import org.lown.consultancy.accounts.dao.CashService;
-import org.lown.consultancy.accounts.dao.CompanyService;
-import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dao.CashDAO;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
 import org.lown.consultancy.accounts.tables.SupplierInvoiceList;
 import org.lown.consultancy.accounts.tables.SupplierList;
 
@@ -107,9 +107,9 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
     private Prepayment prepayment;
     private double totalPrePaymentBF=0.0;
     private double totalPrePaymentCF=0.0;
-    private PurchasesService ps;
-    private CashService cs;
-    private CompanyService companyService;
+    private PurchasesDAO ps;
+    private CashDAO cs;
+    private CompanyDAO companyService;
     double availBalance;
     private static Map<String, Integer> accountMap;
     public PaySupplierDialog()
@@ -121,7 +121,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
         
         accountMap=new HashMap<String,Integer>();
         accountList=new ArrayList<Account>();
-        companyService=new CompanyService();
+        companyService=new CompanyDAO();
         availBalance=0.0;
         
         pBalance=new JPanel();
@@ -343,7 +343,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
              {                        
                 txt_balance.setText("("+df.format(SupplierDashboard.balance)+")");  
              }
-             ps=new PurchasesService();
+             ps=new PurchasesDAO();
              totalPrePaymentBF=ps.getTotalPrepaymentBySupplierId(SupplierList.selectedSupplier.getSupplier_id());
              txt_prepay.setText(df.format(totalPrePaymentBF));
          }
@@ -403,7 +403,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
                 {
                    selAccount=accountMap.get(cbo_bank_mobile.getSelectedItem());
                     txt_availBalance.setText("");
-                    cs=new CashService();
+                    cs=new CashDAO();
                     availBalance=cs.getAccountBalanceById(selAccount);
                     txt_availBalance.setText(df.format(availBalance)); 
                     txt_payAmount.setEditable(true);
@@ -418,7 +418,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
             if (cbo_payMode.getSelectedIndex()==1)
             {
                 txt_availBalance.setText("");
-                cs=new CashService();
+                cs=new CashDAO();
                 availBalance=cs.getAvailableCashCollection();
                 txt_availBalance.setText(df.format(availBalance));
                 cbo_bank_mobile.removeAllItems();
@@ -618,7 +618,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
              }
              System.out.println("Testing Cash TX");
              testPostPay(cashList,SupplierInvoiceList.transactions);
-             ps=new PurchasesService();
+             ps=new PurchasesDAO();
              try {
                 if (btnPost.getText().equalsIgnoreCase("Post"))
                 {

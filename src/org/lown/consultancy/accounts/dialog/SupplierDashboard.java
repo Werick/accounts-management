@@ -22,8 +22,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.AccountsManagement;
-import org.lown.consultancy.accounts.dao.PurchasesService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.PurchasesList;
 import org.lown.consultancy.accounts.tables.PurchasesTransactions;
 import org.lown.consultancy.accounts.tables.SupplierList;
@@ -100,16 +100,16 @@ public class SupplierDashboard extends JPanel implements ActionListener{
     double totalPayments;
     public static double balance;
     
-    SalesService ss;
-    PurchasesService ps;
+    SalesDAO ss;
+    PurchasesDAO ps;
     
     public SupplierDashboard()
     {
         totalPurchases=0.0;
         balance=0.0;
         totalPayments=0.0;
-        ss=new SalesService();
-        ps=new PurchasesService();
+        ss=new SalesDAO();
+        ps=new PurchasesDAO();
         
         SupplierList.selectedSupplier=null;
         PurchasesTransactions.selectedInvoice=null;

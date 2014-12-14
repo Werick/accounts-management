@@ -31,9 +31,9 @@ import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.CashTransfer;
 import org.lown.consultancy.accounts.Prepayment;
 import org.lown.consultancy.accounts.SalesTransaction;
-import org.lown.consultancy.accounts.dao.CashService;
-import org.lown.consultancy.accounts.dao.CompanyService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.CashDAO;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.InvoiceList;
 
@@ -103,14 +103,14 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
     private Prepayment prepayment;
     private double totalPrePaymentBF=0.0;
     private double totalPrePaymentCF=0.0;
-    private SalesService ss;
-    private CompanyService companyService;
+    private SalesDAO ss;
+    private CompanyDAO companyService;
     private List<Account> accountList;
     private static Map<String, Integer> accountMap;
     
     private CashTransfer sourceAcc;
     private CashTransfer destinationAcc;
-    private CashService cs;
+    private CashDAO cs;
     
     public ReceivePaymentDialog()
     {
@@ -118,7 +118,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
         accountMap=new HashMap<String,Integer>();
         accountList=new ArrayList<Account>();
         
-        companyService=new CompanyService();
+        companyService=new CompanyDAO();
         accountList=companyService.getAllAccounts();
         
         
@@ -344,7 +344,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
              {                        
                 txt_balance.setText("("+df.format(CustomerDashboard.balance)+")");  
              }
-             ss=new SalesService();
+             ss=new SalesDAO();
              totalPrePaymentBF=ss.getTotalPrepaymentByCustomerId(CustomerListTable.selectedCustomer.getCustomer_id());
              if(totalPrePaymentBF>0.0) {
                  txt_prepay.setText("(-"+df.format(totalPrePaymentBF)+")");
@@ -625,7 +625,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
             }
             System.out.println("Testing Cash TX");
             testCashReceipt(cashList,InvoiceList.transactions);
-            ss=new SalesService();
+            ss=new SalesDAO();
             try 
             {
                 if (btnPost.getText().equalsIgnoreCase("Post"))
@@ -644,7 +644,7 @@ public class ReceivePaymentDialog extends JPanel implements ActionListener{
                     //excecute only if direct transfer is selected
                     if(cbo_payMode.getSelectedItem().equals("Direct Transfer"))
                     {
-                        cs=new CashService();
+                        cs=new CashDAO();
                         cs.transferMoney(sourceAcc, destinationAcc);
                     }
                     //Ideally We'll print the receipt and close this window

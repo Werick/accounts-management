@@ -31,8 +31,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
 import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.dao.PurchasesService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
 import org.lown.consultancy.accounts.dialog.PurchasesDialog;
 
 /**
@@ -44,7 +44,7 @@ public class PurchasesList extends JPanel{
     private String[] columnTitle=new String[]{"Qty","Code","Description","Unit Price","Net Price","VAT","Amount"};
     private static DefaultTableModel model ;
     private Object[][] data; 
-    private PurchasesService ps;
+    private PurchasesDAO ps;
     private List<Product> productList;
     public static Product selectedProduct;
     private List<Purchase> purchasesItemList;
@@ -56,7 +56,7 @@ public class PurchasesList extends JPanel{
     
     private Map<String,Integer>categoryList;    
     private Map<String,Integer>salesRepList;
-    private ProductService productService; 
+    private ProductDAO productService; 
     
     public PurchasesList()
     {
@@ -73,7 +73,7 @@ public class PurchasesList extends JPanel{
         jTable.setRowHeight(25);
         jTable.setBorder(BorderFactory.createTitledBorder(""));
         
-        productService=new ProductService();
+        productService=new ProductDAO();
         categoryList=productService.getCategoryMap();
         
         
@@ -136,7 +136,7 @@ public class PurchasesList extends JPanel{
         //remove all rows      
         model.getDataVector().removeAllElements();
         jTable.repaint();   
-        ps=new PurchasesService();
+        ps=new PurchasesDAO();
         purchasesItemList2 = null;
         if(ps.getPurchasesBySupplierId(s.getSupplier_id(), Invoicenum) !=null)
         {
@@ -196,7 +196,7 @@ public class PurchasesList extends JPanel{
             Object vat=model.getValueAt(i, 5);//Vat awarded
             Object amt=model.getValueAt(i, 6);// amount
             
-            productService=new ProductService();
+            productService=new ProductDAO();
             Product product=productService.getProductByCode(code.toString());
             purchaseItem=new Purchase();
             purchaseItem.setQty(Integer.parseInt(qty.toString()));
@@ -233,6 +233,13 @@ public class PurchasesList extends JPanel{
                             selectedVat=Double.parseDouble(vat.toString()); 
                             selectedNet=Double.parseDouble(net.toString());     
                             selectedInvoice=invoicenum.toString();
+                       }
+                       else
+                       {
+                           selectedAmount=0.0;
+                           selectedVat=0.0;
+                           selectedNet=0.0;
+                           
                        }
                    }
                    

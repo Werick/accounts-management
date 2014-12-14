@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
 import org.lown.consultancy.accounts.dao.PDFWriter;
-import org.lown.consultancy.accounts.dao.StockService;
+import org.lown.consultancy.accounts.dao.StockDAO;
 
 /**
  *
@@ -57,8 +57,8 @@ public class MainMenu extends JFrame implements ActionListener{
     private JButton btnGlobalProperty;
     private JLabel txt_User;
     public static User gUser;
-    public static CompanyService cs;
-    public static StockService ss;
+    public static CompanyDAO cs;
+    public static StockDAO ss;
     public static Map companyDetails;
     
     private JLabel lbl_creditorInvoice;
@@ -75,8 +75,8 @@ public class MainMenu extends JFrame implements ActionListener{
     public MainMenu(User user)
     {
         gUser=user;
-        cs=new CompanyService();
-        ss=new StockService();
+        cs=new CompanyDAO();
+        ss=new StockDAO();
         companyDetails=cs.getCompanyDetails();
         /*
          * Will prefer to user Global properties for some standard stuff

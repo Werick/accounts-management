@@ -21,8 +21,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
-import org.lown.consultancy.accounts.dao.CustomerService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.CustomerDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.dialog.CustomerDashboard;
 
 
@@ -36,16 +36,16 @@ public class CustomerListTable extends JPanel{
     private static DefaultTableModel model ;
     private Object[][] data;
     private List<Customer> findList;    
-    private CustomerService cs;
-    private SalesService ss;
+    private CustomerDAO cs;
+    private SalesDAO ss;
     public static Customer selectedCustomer;
     
     
     public CustomerListTable()
     {
         AccountsManagement.logger.info("Creating Find Table UI...");
-        cs=new CustomerService();
-        ss=new SalesService();
+        cs=new CustomerDAO();
+        ss=new SalesDAO();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model) {
             public boolean isCellEditable(int rowIndex, int colIndex) {

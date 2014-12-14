@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
-import org.lown.consultancy.accounts.dao.CustomerService;
+import org.lown.consultancy.accounts.dao.CustomerDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 
 /**
@@ -68,7 +68,7 @@ public class CustomerDialog extends JPanel implements ActionListener, FocusListe
     
     public static Customer customer; //the new customer
     public static Customer oldCustomer; //currently selected customer
-    public static CustomerService cs;
+    public static CustomerDAO cs;
     
     public CustomerDialog()
     {
@@ -82,7 +82,7 @@ public class CustomerDialog extends JPanel implements ActionListener, FocusListe
         dlgCustomer.setLocationRelativeTo(null); //center the dialog
         
         customer = new Customer();
-        cs=new CustomerService();
+        cs=new CustomerDAO();
                
         lbl_title=new JLabel();
         lbl_title.setBounds(200, 10, 400, 20);         

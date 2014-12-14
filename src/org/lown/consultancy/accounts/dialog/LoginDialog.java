@@ -16,7 +16,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.dao.UserService;
+import org.lown.consultancy.accounts.dao.UserDAO;
 
 /**
  *
@@ -38,7 +38,7 @@ public class LoginDialog extends JPanel implements ActionListener{
     private JLabel lbl_Password;
     private JLabel lbl_Title;
     private User user;
-    private UserService userService;
+    private UserDAO userService;
     //private Sql db;
      
     public LoginDialog()
@@ -47,7 +47,7 @@ public class LoginDialog extends JPanel implements ActionListener{
         
         AccountsManagement.logger.info("Application User Log on UI...");
         user =new User();
-        userService=new UserService();
+        userService=new UserDAO();
         //db=new Sql();
         dlgLoginForm= new JDialog((JDialog)null, "LOGIN", true);
         dlgLoginForm.setLayout(null);

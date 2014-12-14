@@ -24,12 +24,12 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class CompanyService {
+public class CompanyDAO {
     
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     private Map<String,String> companyDetails;
-    public CompanyService()
+    public CompanyDAO()
     {
         
     }

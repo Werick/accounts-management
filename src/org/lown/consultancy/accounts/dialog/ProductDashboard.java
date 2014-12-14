@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
-import org.lown.consultancy.accounts.dao.CategoryService;
+import org.lown.consultancy.accounts.dao.CategoryDAO;
 import org.lown.consultancy.accounts.tables.CategoryListTable;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ProductListTable;
@@ -95,7 +95,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
     private JButton btnDeleteCategory;
     
     private CategoryListTable categoryListTable;
-    private CategoryService categoryService;
+    private CategoryDAO categoryService;
     private Category productCategory;
     
     public ProductDashboard()
@@ -330,7 +330,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
                 }
                 
                 productCategory=new Category();
-                categoryService=new CategoryService();
+                categoryService=new CategoryDAO();
                 productCategory.setCategoryCode(txt_categoryCode.getText());
                 productCategory.setCategoryName(txt_categoryName.getText());
                 try {

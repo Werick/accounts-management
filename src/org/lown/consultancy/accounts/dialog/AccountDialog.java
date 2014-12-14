@@ -21,7 +21,7 @@ import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
-import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
 
 /**
  *
@@ -67,7 +67,7 @@ public class AccountDialog extends JPanel implements ActionListener{
      //Border Titles
     private TitledBorder accountTitle = new TitledBorder("Account Details");
     
-    private CompanyService cs;
+    private CompanyDAO cs;
    
     private String category[]={"Select","Cash","Bank","Mobile Money"};
     public AccountDialog()
@@ -202,7 +202,7 @@ public class AccountDialog extends JPanel implements ActionListener{
             {
                 account=new Account();
                 Cash cashTx =new Cash();
-                cs=new CompanyService();
+                cs=new CompanyDAO();
                 account.setAccount_number(txt_accountNumber.getText());
                 account.setAccount_name(txt_accountName.getText());
                 account.setBranch(txt_branch.getText());
@@ -254,7 +254,7 @@ public class AccountDialog extends JPanel implements ActionListener{
                     {
                         Cash cashTx=new Cash();
                         account=new Account();
-                        cs=new CompanyService();
+                        cs=new CompanyDAO();
                         account.setAccount_number(txt_accountNumber.getText());
                         account.setAccount_name(txt_accountName.getText());
                         account.setBranch(txt_branch.getText());

@@ -18,7 +18,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Product;
-import org.lown.consultancy.accounts.dao.ProductService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
 
 /**
  *
@@ -29,14 +29,14 @@ public class ProductListTable extends JPanel{
     private String[] columnTitle=new String[]{"Product_id","Code","Name","Category","Unit"};
     private static DefaultTableModel model ;
     private Object[][] data; 
-    private ProductService ps;
+    private ProductDAO ps;
     private List<Product> productList;
     public static Product selectedProduct;
     
     public ProductListTable()
     {
         AccountsManagement.logger.info("Creating Product List Table UI...");
-        ps=new ProductService();
+        ps=new ProductDAO();
         productList=ps.getAllProducts();
         selectedProduct=null;
         model = new DefaultTableModel(data,columnTitle);

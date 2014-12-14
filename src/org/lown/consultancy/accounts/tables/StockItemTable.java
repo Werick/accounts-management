@@ -30,8 +30,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Stock;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.dao.StockService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
+import org.lown.consultancy.accounts.dao.StockDAO;
 
 /**
  *
@@ -44,8 +44,8 @@ public class StockItemTable extends JPanel{
     private Object[][] data;
     private List<Stock> stockList; 
     private List<Stock> updateStockList;
-    private ProductService ps;
-    private StockService ss;
+    private ProductDAO ps;
+    private StockDAO ss;
     public static Stock selectedStockItem;
     public static int selectedRowIndex;
     
@@ -55,8 +55,8 @@ public class StockItemTable extends JPanel{
     public StockItemTable()
     {
         AccountsManagement.logger.info("Creating Stock Item List Table UI...");
-        ps=new ProductService();
-        ss=new StockService();
+        ps=new ProductDAO();
+        ss=new StockDAO();
         //productList=ps.getAllProducts();
         
         model = new DefaultTableModel(data,columnTitle);

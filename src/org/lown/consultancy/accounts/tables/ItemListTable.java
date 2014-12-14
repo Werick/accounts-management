@@ -23,12 +23,9 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Product;
-import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesItem;
-import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.ProductService;
-import org.lown.consultancy.accounts.dao.PurchasesService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.ProductDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 
 /**
  *
@@ -41,8 +38,8 @@ public class ItemListTable extends JPanel{
     private Object[][] data;
     private List<SalesItem> salesItemList;
     public static List<SalesItem> salesItemList2;
-    private ProductService ps;
-    private SalesService ss;
+    private ProductDAO ps;
+    private SalesDAO ss;
     
     public static double selectedAmount;
     public static double selectedDiscount;
@@ -136,7 +133,7 @@ public class ItemListTable extends JPanel{
             Object discount=model.getValueAt(i, 4);//discount awarded
             Object amt=model.getValueAt(i, 5);//transaction amount
             
-            ps=new ProductService();
+            ps=new ProductDAO();
             Product product=ps.getProductByCode(code.toString());
             salesItem=new SalesItem();
             salesItem.setQuantity(Integer.parseInt(qty.toString()));
@@ -172,6 +169,11 @@ public class ItemListTable extends JPanel{
                             
                             
                        }
+                       else
+                       {
+                           selectedAmount=0.0;
+                           selectedDiscount=0.0;
+                       }
                    }
                    
                });
@@ -194,8 +196,8 @@ public void displayInvoice(Customer s, Integer Invoicenum)
         //remove all rows      
         model.getDataVector().removeAllElements();
         jTable.repaint();   
-        ss=new SalesService();
-        ps=new ProductService();
+        ss=new SalesDAO();
+        ps=new ProductDAO();
         salesItemList2 = null;
         if(ss.getTransactionsByInvoiceId(s, Invoicenum) !=null)
         {

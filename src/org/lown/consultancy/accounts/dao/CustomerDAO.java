@@ -12,42 +12,41 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Sql;
-import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dialog.MainMenu;
 
 /**
  *
  * @author LENOVO USER
  */
-public class SupplierService {
+public class CustomerDAO {
+    
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
-    
-    public SupplierService()
+    //private Sql Sql;
+    public CustomerDAO()
     {
-        
+        //Sql=new Sql();
     }
-    
-    public void saveSupplier(Supplier sp) throws SQLException
+    public void saveCustomer(Customer customer) throws SQLException
     {      
         
         try
         {
             Sql.getConnection().setAutoCommit(false) ;
-            preppedStmtInsert="INSERT INTO supplier (number,sname,phone,address,contactperson,dateCreated,createdby,pin) VALUES(?,?,?,?,?,?,?,?)";
+            preppedStmtInsert="INSERT INTO customer (customernumber,customername,phone,address,contactperson,dateCreated,createdby) VALUES(?,?,?,?,?,?,?)";
             PreparedStatement pst=Sql.getConnection().prepareStatement(preppedStmtInsert);
-            pst.setString(1, sp.getSupplierNumber());
-            pst.setString(2, sp.getSupplierName());
-            pst.setString(3, sp.getPhone());
-            pst.setString(4, sp.getAddress());
-            pst.setString(5, sp.getContactPerson());
+            pst.setString(1, customer.getCustomerNumber());
+            pst.setString(2, customer.getCustomerName());
+            pst.setString(3, customer.getPhone());
+            pst.setString(4, customer.getAddress());
+            pst.setString(5, customer.getContactPerson());
             pst.setTimestamp(6, Sql.getCurrentTimeStamp());
             pst.setInt(7, MainMenu.gUser.getUserId());   
-            pst.setString(8, sp.getPhone());
             pst.execute();
             Sql.getConnection().commit();
-            JOptionPane.showMessageDialog(null, "Supplier Record Added...");
+            JOptionPane.showMessageDialog(null, "Customer Record Added...");
         }
         catch (SQLException e) 
          {
@@ -65,28 +64,27 @@ public class SupplierService {
         
     }
     
-    public Supplier getSupplierById(int id)
+    public Customer getCustomerById(int id)
     {
-        Supplier sp=null;
+        Customer c=null;
         try
         {
             //log info
-            AccountsManagement.logger.info("Getting Supplier Details given the internal DB id... ");
-            String sqlStmt="Select supplier_id,sname,number,phone,address, contactperson, pin ";
-            sqlStmt+=" from supplier WHERE supplier_id =" + id + "";
-            sqlStmt+=" order by number asc";
+            AccountsManagement.logger.info("Getting Customer Details given the internal DB id... ");
+            String sqlStmt="Select customer_id,customername,customernumber,phone,address, contactperson ";
+            sqlStmt+=" from customer WHERE customer_id =" + id + "";
+            sqlStmt+=" order by customernumber asc";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
-            {                
-                sp=new Supplier();
-                sp.setSupplierName(rs.getString("sname"));  
-                sp.setSupplierNumber(rs.getString("number"));
-                sp.setContactPerson(rs.getString("contactperson"));
-                sp.setAddress(rs.getString("address"));
-                sp.setPhone(rs.getString("phone"));               
-                sp.setSupplier_id(rs.getInt("supplier_id"));
-                sp.setPin(rs.getString("pin"));
+            {
+                c=new Customer();
+                c.setCustomerName(rs.getString("customername"));  
+                c.setCustomerNumber(rs.getString("customernumber"));
+                c.setContactPerson(rs.getString("contactperson"));
+                c.setAddress(rs.getString("address"));
+                c.setPhone(rs.getString("phone"));               
+                c.setCustomer_id(rs.getInt("customer_id"));
             }
         }
         catch (SQLException e) 
@@ -103,30 +101,29 @@ public class SupplierService {
 //        }
 	
          
-        return sp;
+        return c;
     }
-    public Supplier getSupplierByNumber(String id)
+    public Customer getCustomerByNumber(String id)
     {
-        Supplier sp=null;
+        Customer c=null;
         try
         {
             //log info
             AccountsManagement.logger.info("Getting Customer Details given the internal DB id... ");
-            String sqlStmt="Select supplier_id,sname,number,phone,address, contactperson,pin ";
-            sqlStmt+=" from supplier WHERE number ='" + id + "'";
-            sqlStmt+=" order by number asc";
+            String sqlStmt="Select customer_id,customername,customernumber,phone,address, contactperson ";
+            sqlStmt+=" from customer WHERE customernumber ='" + id + "'";
+            sqlStmt+=" order by customernumber asc";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
             {
-                sp=new Supplier();
-                sp.setSupplierName(rs.getString("sname"));  
-                sp.setSupplierNumber(rs.getString("number"));
-                sp.setContactPerson(rs.getString("contactperson"));
-                sp.setAddress(rs.getString("address"));
-                sp.setPhone(rs.getString("phone"));               
-                sp.setSupplier_id(rs.getInt("supplier_id"));
-                sp.setPin(rs.getString("pin"));
+                c=new Customer();
+                c.setCustomerName(rs.getString("customername"));  
+                c.setCustomerNumber(rs.getString("customernumber"));
+                c.setContactPerson(rs.getString("contactperson"));
+                c.setAddress(rs.getString("address"));
+                c.setPhone(rs.getString("phone"));               
+                c.setCustomer_id(rs.getInt("customer_id"));
             }
         }
         catch (SQLException e) 
@@ -143,33 +140,31 @@ public class SupplierService {
 //        }
 	
          
-        return sp;
+        return c;
     }
     
-    public List<Supplier> getSupplierByName(String search)
+    public List<Customer> getCustomerByName(String search)
     {
-        List<Supplier> spList=new ArrayList<Supplier>();
-        Supplier sp=null;
+        List<Customer> custList=new ArrayList<Customer>();
         try
         {
             //log info
             AccountsManagement.logger.info("Get List of Customers given the search criteria... ");
-            String sqlStmt="Select supplier_id,sname,number,phone,address, contactperson, pin from supplier WHERE voided=0 and (number like '%" + search + "%' or "; //
-            sqlStmt=sqlStmt+" sname like '%" + search + "%' or phone like '%" + search + "%' or address like '%" + search + "%'  or contactperson like '%" + search + "%') order by number asc;";
+            String sqlStmt="Select customer_id,customername,customernumber,phone,address, contactperson from customer WHERE voided=0 and (customernumber like '%" + search + "%' or "; //
+            sqlStmt=sqlStmt+" customername like '%" + search + "%' or phone like '%" + search + "%' or address like '%" + search + "%'  or contactperson like '%" + search + "%') order by customernumber asc;";
           
             AccountsManagement.logger.info("Executing Query: " + sqlStmt);
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
             {
-                sp=new Supplier();
-                sp.setSupplierName(rs.getString("sname"));  
-                sp.setSupplierNumber(rs.getString("number"));
-                sp.setContactPerson(rs.getString("contactperson"));
-                sp.setAddress(rs.getString("address"));
-                sp.setPhone(rs.getString("phone"));               
-                sp.setSupplier_id(rs.getInt("supplier_id"));
-                sp.setPin(rs.getString("pin"));
-                spList.add(sp);
+                Customer c = new Customer();
+                c.setCustomerNumber(rs.getString("customernumber"));  
+                c.setCustomerName(rs.getString("customername"));
+                c.setAddress(rs.getString("address"));
+                c.setPhone(rs.getString("phone"));
+                c.setContactPerson(rs.getString("contactperson"));                
+                c.setCustomer_id(rs.getInt("customer_id"));              
+                custList.add(c);
             }
         }
         catch (SQLException e) 
@@ -185,7 +180,7 @@ public class SupplierService {
 //            Sql.Close();//close open connection
 //        }
 	 
-        return spList;
+        return custList;
     }
     
     /**
@@ -193,14 +188,14 @@ public class SupplierService {
      * @param identifier
      * @return identifier count
      */
-    public int checkDuplicateSupplierNumber(String identifier) 
+    public int checkDuplicateCustomerNumber(String identifier) 
     {
         int p=0;
         try
         {
             //log info
-            AccountsManagement.logger.info("Validating Supplier number... ");
-            String sqlStmt="Select count(supplier_id) as idcount from supplier WHERE number ='" + identifier + "'";
+            AccountsManagement.logger.info("Validating Customer number... ");
+            String sqlStmt="Select count(customer_id) as idcount from customer WHERE customernumber ='" + identifier + "'";
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())
             {
@@ -225,30 +220,29 @@ public class SupplierService {
     
     /**
      * Update Participant details
-     * @param Supplier 
+     * @param Customer 
      */
-    public void updateSupplier(Supplier sp) throws SQLException 
+    public void updateCustomer(Customer c) throws SQLException 
      {
           
          try
          {
              //log info
-             AccountsManagement.logger.info("Updating Supplier Details... ");
+             AccountsManagement.logger.info("Updating Customer Details... ");
              //create a prepared statement
-             preppedStmtUpdate="update supplier set sname=?,number=?,phone=?,address=?,contactperson=?,dateChanged=?, changedBy=?, pin=? WHERE supplier_id=?";
+             preppedStmtUpdate="update customer set customername=?,customernumber=?,phone=?,address=?,contactperson=?,dateChanged=?, changedBy=? WHERE customer_id=?";
             //System.out.println("Check if db print has data: "+ p.getlMiddleFmd());
             //using Transactions to ensure successfull update
             Sql.getConnection().setAutoCommit(false) ;
             PreparedStatement pst= Sql.getConnection().prepareStatement(preppedStmtUpdate);
-            pst.setString(1, sp.getSupplierName());
-            pst.setString(2, sp.getSupplierNumber());
-            pst.setString(3, sp.getPhone());
-            pst.setString(4, sp.getAddress());
-            pst.setString(5, sp.getContactPerson());            
+            pst.setString(1, c.getCustomerName());
+            pst.setString(2, c.getCustomerNumber());
+            pst.setString(3, c.getPhone());
+            pst.setString(4, c.getAddress());
+            pst.setString(5, c.getContactPerson());            
             pst.setTimestamp(6, Sql.getCurrentTimeStamp()); 
             pst.setInt(7, MainMenu.gUser.getUserId());
-            pst.setString(8, sp.getPin());            
-            pst.setInt(9, sp.getSupplier_id());
+            pst.setInt(8, c.getCustomer_id());
             pst.executeUpdate(); 
             Sql.getConnection().commit(); //commit transaction if successful
             JOptionPane.showMessageDialog(null, "Record Updated...");
@@ -267,5 +261,4 @@ public class SupplierService {
 //             Sql.Close();
 //         }
     } 
-    
 }

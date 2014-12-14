@@ -24,12 +24,12 @@ import org.lown.consultancy.accounts.dialog.MainMenu;
  *
  * @author LENOVO USER
  */
-public class ProductService {
+public class ProductDAO {
     private String preppedStmtInsert=null;
     private String preppedStmtUpdate=null;
     //private Sql Sql;
     
-    public ProductService()
+    public ProductDAO()
     {
        // Sql=new Sql();
     }

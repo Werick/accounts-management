@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.SupplierService;
+import org.lown.consultancy.accounts.dao.SupplierDAO;
 import org.lown.consultancy.accounts.tables.SupplierList;
 
 /**
@@ -70,7 +70,7 @@ public class SupplierDialog extends JPanel implements ActionListener, FocusListe
     
     public static Supplier supplier; //the new customer
     public static Supplier oldSupplier; //currently selected customer
-    public static SupplierService ss;
+    public static SupplierDAO ss;
     
     public SupplierDialog()
     {
@@ -84,7 +84,7 @@ public class SupplierDialog extends JPanel implements ActionListener, FocusListe
         dlgSupplier.setLocationRelativeTo(null); //center the dialog
         
         supplier = new Supplier();
-        ss=new SupplierService();
+        ss=new SupplierDAO();
                
         lbl_title=new JLabel();
         lbl_title.setBounds(200, 10, 400, 20);         

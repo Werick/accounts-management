@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.AccountsManagement;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.TransactionsTable;
 
@@ -101,13 +101,13 @@ public class CustomerDashboard extends JPanel implements ActionListener{
     double totalCash;
     public static double balance;
     
-    SalesService ss;
+    SalesDAO ss;
     public CustomerDashboard()
     {
         totalSales=0.0;
         balance=0.0;
         totalCash=0.0;
-        ss=new SalesService();
+        ss=new SalesDAO();
         CustomerListTable.selectedCustomer=null; 
         //TransactionsTable.selectedInvoice=null;
         

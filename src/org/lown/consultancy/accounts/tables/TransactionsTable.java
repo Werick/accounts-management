@@ -32,7 +32,7 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.SalesTransaction;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.dialog.PurchasesDialog;
 import org.lown.consultancy.accounts.dialog.SalesDialog;
 
@@ -47,7 +47,7 @@ public class TransactionsTable extends JPanel{
     private static DefaultTableModel model ;
     private Object[][] data;
     private List<SalesTransaction> transactions;    
-    private SalesService ss;
+    private SalesDAO ss;
     public static SalesTransaction selectedTx;
     public static Integer selectedInvoice;
     private DecimalFormat df = new DecimalFormat("#0.00");
@@ -55,7 +55,7 @@ public class TransactionsTable extends JPanel{
     public TransactionsTable()
     {
         AccountsManagement.logger.info("Creating Transactions Table UI...");
-        ss=new SalesService();
+        ss=new SalesDAO();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){
             public boolean isCellEditable(int rowIndex, int colIndex) {

@@ -31,7 +31,7 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.SalesTransaction;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 
 /**
  *
@@ -44,7 +44,7 @@ public class InvoiceList extends JPanel{
     private static DefaultTableModel model ;
     private static Object[][] data;
     public static List<SalesTransaction> transactions;    
-    private static SalesService ss;
+    private static SalesDAO ss;
     public static SalesTransaction selectedTx;
     private static DecimalFormat df = new DecimalFormat("#0.00");
     private JCheckBox checkBox = new JCheckBox();
@@ -52,7 +52,7 @@ public class InvoiceList extends JPanel{
     public InvoiceList()
     {
         AccountsManagement.logger.info("Creating Transactions Table UI...");
-        ss=new SalesService();
+        ss=new SalesDAO();
         
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){

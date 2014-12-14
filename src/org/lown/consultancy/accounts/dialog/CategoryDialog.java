@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
-import org.lown.consultancy.accounts.dao.CategoryService;
+import org.lown.consultancy.accounts.dao.CategoryDAO;
 import org.lown.consultancy.accounts.tables.CategoryListTable;
 
 /**
@@ -45,7 +45,7 @@ public class CategoryDialog extends JPanel implements ActionListener{
     
     private static JDialog dlgCategory;
     private CategoryListTable categoryListTable;
-    private CategoryService categoryService;
+    private CategoryDAO categoryService;
     private Category productCategory;
     
     public CategoryDialog()
@@ -159,7 +159,7 @@ public class CategoryDialog extends JPanel implements ActionListener{
                 }
                 
                 productCategory=new Category();
-                categoryService=new CategoryService();
+                categoryService=new CategoryDAO();
                 productCategory.setCategoryCode(txt_categoryCode.getText());
                 productCategory.setCategoryName(txt_categoryName.getText());
                 try {

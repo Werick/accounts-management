@@ -32,8 +32,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.Supplier;
-import org.lown.consultancy.accounts.dao.PurchasesService;
-import org.lown.consultancy.accounts.dao.SalesService;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 
 /**
  *
@@ -47,8 +47,8 @@ public class SupplierInvoiceList extends JPanel{
     private static DefaultTableModel model ;
     private static Object[][] data;
     public static List<Purchase> transactions;  
-    private static SalesService ss;
-    private PurchasesService ps;
+    private static SalesDAO ss;
+    private PurchasesDAO ps;
     public static Purchase selectedTx;    
     private static DecimalFormat df = new DecimalFormat("#0.00");    
     private JCheckBox checkBox = new JCheckBox();
@@ -56,7 +56,7 @@ public class SupplierInvoiceList extends JPanel{
     public SupplierInvoiceList()
     {
         AccountsManagement.logger.info("Creating Transactions Table UI...");
-        ps=new PurchasesService();
+        ps=new PurchasesDAO();
         
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){

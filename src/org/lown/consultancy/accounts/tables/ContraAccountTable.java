@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.ContraAccount;
-import org.lown.consultancy.accounts.dao.CompanyService;
+import org.lown.consultancy.accounts.dao.CompanyDAO;
 
 /**
  *
@@ -29,14 +29,14 @@ public class ContraAccountTable extends JPanel{
     private String[] columnTitle=new String[]{"Contra_id","Name","Description"};
     private static DefaultTableModel model ;
     private Object[][] data; 
-    private CompanyService cs;
+    private CompanyDAO companyDAO;
     private List<ContraAccount> contraList;
     
     public static ContraAccount selectedAccount;
     public ContraAccountTable ()
     {
-        cs=new CompanyService();
-        contraList=cs.getAllContraAccounts();
+        companyDAO=new CompanyDAO();
+        contraList=companyDAO.getAllContraAccounts();
         
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){
@@ -87,7 +87,7 @@ public class ContraAccountTable extends JPanel{
                             System.out.println(String.format("Selected Row in view: %d. " + "Selected Row in model: %d.", selectedRow, modelRow));
                             System.out.println(String.format("Selected Row in view:  " + data.toString()));
                             
-                            selectedAccount=cs.getContraAccountById(Integer.parseInt(data.toString()))   ;         
+                            selectedAccount=companyDAO.getContraAccountById(Integer.parseInt(data.toString()))   ;         
                             
                        }
                    }
@@ -101,7 +101,7 @@ public class ContraAccountTable extends JPanel{
         model.getDataVector().removeAllElements();
         jTable.repaint();   
          
-        //list all available product categories from the database
+        //list all available Contra Expenses from the database
         if(!contraList.isEmpty())
          {
             for (ContraAccount c:contraList)
