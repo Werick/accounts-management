@@ -314,9 +314,8 @@ public class MainMenu extends JFrame implements ActionListener{
         }
         else  if(e.getActionCommand().equals(ACT_USER))
         {
-//            AccountsManagement.logger.info("Loading Product Dialog form... ");            
-////            SupplierDialog.createAndShowGUI(); 
-//            ProductDashboard.createAndShowGUI();
+            AccountsManagement.logger.info("Loading Users Dialog form... ");            
+            UserDialog.createAndShowGUI();            
             return;
         }
     }

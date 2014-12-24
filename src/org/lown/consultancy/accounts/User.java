@@ -13,9 +13,11 @@ import java.util.List;
 public class User {
     private String userName;
     private String name;
+    private String otherNames;
     private String password;
     private int userId;
     private List<String> roles;
+    
     
     public boolean hasRole(String role)
     {
@@ -69,6 +71,14 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getOtherNames() {
+        return otherNames;
+    }
+
+    public void setOtherNames(String otherNames) {
+        this.otherNames = otherNames;
     }
     
     

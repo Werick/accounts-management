@@ -7,6 +7,7 @@ package org.lown.consultancy.accounts.dialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -32,14 +33,15 @@ public class LoginDialog extends JPanel implements ActionListener{
     
     public static JTextField txt_uName;
     public static JPasswordField txt_Pass;
+    public static Map<String,Integer>rolesMap;
     
     public static final Font font = new Font("Times New Roman", Font.PLAIN, 16);
     private JLabel lbl_uName;
     private JLabel lbl_Password;
     private JLabel lbl_Title;
     private User user;
-    private UserDAO userService;
-    //private Sql db;
+    private UserDAO userDao;
+    
      
     public LoginDialog()
     {
@@ -47,8 +49,8 @@ public class LoginDialog extends JPanel implements ActionListener{
         
         AccountsManagement.logger.info("Application User Log on UI...");
         user =new User();
-        userService=new UserDAO();
-        //db=new Sql();
+        userDao=new UserDAO();
+        rolesMap=userDao.getUserRoleMap();
         dlgLoginForm= new JDialog((JDialog)null, "LOGIN", true);
         dlgLoginForm.setLayout(null);
         dlgLoginForm.setSize(350, 300);
@@ -135,13 +137,13 @@ public class LoginDialog extends JPanel implements ActionListener{
             }
             String pass=txt_Pass.getText();
             String uName=txt_uName.getText();            
-            user=userService.getUser(uName, pass);                      
+            user=userDao.getUser(uName, pass);                      
             if(user!=null)
             {
                 AccountsManagement.logger.info("Sucessfull Log on... Loading Main Menu");
                 AccountsManagement.logger.info("User: "+ user.getName()+" Login  Sucessfull");
                 dlgLoginForm.setVisible(false); 
-                user.setRoles(userService.getUserRole(user));
+                user.setRoles(userDao.getUserRole(user));
                 MainMenu.createAndShowGUI(user);
                 //MainMenu.createAndShowGUI();
             }
