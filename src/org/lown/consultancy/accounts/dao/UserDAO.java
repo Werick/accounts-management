@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import org.lown.consultancy.accounts.AccountsManagement;
-import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.Sql;
 import org.lown.consultancy.accounts.User;
 import org.lown.consultancy.accounts.dialog.LoginDialog;
@@ -69,6 +68,42 @@ public class UserDAO {
                 return rolesMap;
 
     }
+    public User getUser(int id) 
+    {
+        User user=null;
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting user Details given username and pass... ");
+            String sqlStmt="Select UserID,lname,username, othername, pass from users WHERE userid =" + id + ";";
+           // Open();
+           // Statement statement = c.createStatement();
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                user=new User();
+                user.setUserId(rs.getInt("UserID"));  
+                user.setName(rs.getString("lname"));
+                user.setUserName(rs.getString("username"));   
+                user.setOtherNames(rs.getString("othername"));
+                user.setPassword(rs.getString("pass"));                
+            }
+            rs.close();
+            user.setRoles(getUserRole(user));
+            
+            
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.fillInStackTrace());
+         }  
+        return user;
+    }
+    
     public User getUser(String uName, String pass) 
     {
         User user=null;
@@ -144,8 +179,9 @@ public class UserDAO {
             AccountsManagement.logger.info("Getting user Details given username and pass... ");
             String sqlStmt="SELECT u.userid,lname,username, group_concat(r.role order by r.role)as roles ";
                     sqlStmt+="FROM users u ";
-                    sqlStmt+="join user_role ur on ur.userid=u.userid ";
+                    sqlStmt+="join user_role ur on ur.userid=u.userid and ur.voided=0 ";
                     sqlStmt+="join role r on r.role_id=ur.role_id ";
+                    sqlStmt+="where u.voided=0 ";
                     sqlStmt+="group by u.userid; ";
                     
            // Open();
@@ -234,5 +270,89 @@ public class UserDAO {
             AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
             Sql.getConnection().rollback();
         }
+    }
+    
+    /**
+     * Update User details
+     * @param User user
+     */
+    public void updateUser(User user) throws SQLException 
+    {
+          
+         try
+         {
+             //log info
+             AccountsManagement.logger.info("Updating User Details... ");
+             
+             Sql.getConnection().setAutoCommit(false) ;
+             preppedStmtUpdate="update users set lname=?,othername=?,username=?,pass=?,dateChanged=?, changedBy=? WHERE userid=?";                    
+             PreparedStatement pst= Sql.getConnection().prepareStatement(preppedStmtUpdate);
+             
+             pst.setString(1,user.getName());
+             pst.setString(2,user.getOtherNames());
+             pst.setString(3,user.getUserName());
+             pst.setString(4,user.getPassword());
+             pst.setTimestamp(5, Sql.getCurrentTimeStamp()); 
+             pst.setInt(6, MainMenu.gUser.getUserId());
+             pst.setInt(7, user.getUserId());
+             pst.executeUpdate();
+       
+             //get current user roles
+             List<String>curRoles=getUserRole(user);
+             //we want to update only if the user has new roles or has been strucked off is current roles
+             
+             //Insert any new role
+             for(String s:user.getRoles())
+             {
+                 if(!curRoles.contains(s))
+                 {
+                     preppedStmtInsert="INSERT INTO user_role (role_id,userid,dateCreated,createdby) VALUES(?,?,?,?)";
+                     pst=Sql.getConnection().prepareStatement(preppedStmtInsert,Sql.createStatement().RETURN_GENERATED_KEYS);                
+               
+                     pst.setInt(1, LoginDialog.rolesMap.get(s));                
+                     pst.setInt(2, user.getUserId());                           
+                     pst.setTimestamp(3, Sql.getCurrentTimeStamp());
+                     pst.setInt(4, MainMenu.gUser.getUserId()); 
+                     pst.execute();
+                 }
+             }
+             
+             //Struck user roles
+             for(String s: curRoles)
+             {
+                 if(s.equalsIgnoreCase("System Developer")) //skip if has system developer role
+                 {
+                     continue;
+                 } 
+                 if(!user.getRoles().contains(s) )
+                 {
+                     preppedStmtUpdate="update user_role set voided=?,datevoided=?, voidedby=?, voidreason=? WHERE userid=? and role_id=?";                    
+                     pst= Sql.getConnection().prepareStatement(preppedStmtUpdate);
+                     
+                     pst.setInt(1,1);
+                     pst.setTimestamp(2, Sql.getCurrentTimeStamp()); 
+                     pst.setInt(3, MainMenu.gUser.getUserId());
+                     pst.setString(4,"Dropping user role");
+                     pst.setInt(5, user.getUserId());
+                     pst.setInt(6, LoginDialog.rolesMap.get(s));    
+                     pst.executeUpdate();
+                 }
+             }
+             
+             Sql.getConnection().commit();
+             //commit transaction if successful
+             JOptionPane.showMessageDialog(null, "User Record Updated...");
+                          
+         }
+         catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            //Log error
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+            Sql.getConnection().rollback();
+         }
+         
     }
 }

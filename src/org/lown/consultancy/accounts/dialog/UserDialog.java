@@ -64,17 +64,17 @@ public class UserDialog extends JPanel implements ActionListener{
     private JLabel lbl_confirmPass;
     
     
-    private JTextField txt_sirName;
-    private JTextField txt_otherNames;
-    private JTextField txt_userName;
-    private JPasswordField txt_pass;
-    private JPasswordField txt_confirmPass;
+    public static JTextField txt_sirName;
+    public static JTextField txt_otherNames;
+    public static JTextField txt_userName;
+    public static JPasswordField txt_pass;
+    public static JPasswordField txt_confirmPass;
    
     
-    private JCheckBox chk_clerk;
-    private JCheckBox chk_admin;
-    private JCheckBox chk_accountant;
-    private JCheckBox chk_authenticated;
+    public static JCheckBox chk_clerk;
+    public static JCheckBox chk_admin;
+    public static JCheckBox chk_accountant;
+    public static JCheckBox chk_authenticated;
     
     private UsersTable usersTable;
     private ExpensesList contraTable2;
@@ -258,6 +258,12 @@ public class UserDialog extends JPanel implements ActionListener{
                 
                 String passText = new String(txt_pass.getPassword());
                 String confirmPassText = new String(txt_confirmPass.getPassword());
+                
+                if(passText.startsWith("*"))
+                {
+                    JOptionPane.showMessageDialog(null, "The Passwords should not start with asterisk (*) ... ");
+                    return;
+                }
                 if(!passText.equals(confirmPassText))
                 {
                     JOptionPane.showMessageDialog(null, "The Passwords are not Matching...");
@@ -370,7 +376,104 @@ public class UserDialog extends JPanel implements ActionListener{
             }
             else if(btnUpdate.getText().equalsIgnoreCase("Update"))
             {
-                return;
+                if(UsersTable.selectedUser==null)
+                {
+                    JOptionPane.showMessageDialog(null, "No User is Selected...");
+                    return;
+                }
+                String passText = new String(txt_pass.getPassword());
+                String confirmPassText = new String(txt_confirmPass.getPassword());
+                if(!passText.equals(confirmPassText))
+                {
+                    JOptionPane.showMessageDialog(null, "The Passwords are not Matching...");
+                    return;
+                }
+                
+                if(txt_sirName.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Enter the user's Sir Name...");
+                    return;
+                }
+                
+                if(txt_otherNames.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Enter user's other Names...");
+                    return;
+                }
+                
+                if(txt_pass.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Enter the user's Password...");
+                    return;
+                }
+                
+                 if(txt_userName.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Enter the user's login user name...");
+                    return;
+                }
+                
+                roles=new ArrayList<String>();
+                if (chk_accountant.isSelected())
+                {
+                    roles.add(chk_accountant.getText().toLowerCase());
+                }
+                
+                if (chk_admin.isSelected())
+                {
+                    roles.add(chk_admin.getText().toLowerCase());
+                }
+                
+                if (chk_authenticated.isSelected())
+                {
+                    roles.add(chk_authenticated.getText().toLowerCase());
+                }
+                
+                if (chk_clerk.isSelected())
+                {
+                    roles.add(chk_clerk.getText().toLowerCase());
+                }
+                
+                if (roles.isEmpty())
+                {
+                   JOptionPane.showMessageDialog(null, "No Role has been assigned to the user...");
+                   return; 
+                }
+                for(String s: roles)
+                {
+                    System.out.println("Roles: "+s);
+                }
+                
+                
+                user=new User();
+                user.setName(txt_sirName.getText());
+                user.setUserId(UsersTable.selectedUser.getUserId());
+                
+                try {
+                    if(passText.length()!=41 && confirmPassText.length()!=41)//checking if the password has changed
+                    {
+                        user.setPassword(MySQLPassword(passText));
+                    }
+                    else
+                    {
+                       user.setPassword(UsersTable.selectedUser.getPassword());
+                    }
+                    
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(UserDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                user.setUserName(txt_userName.getText());
+                user.setOtherNames(txt_otherNames.getText());
+                user.setRoles(roles);  
+                
+                userDAO=new UserDAO();
+                 
+                try {
+                    userDAO.updateUser(user);                   
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(UserDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -389,20 +492,22 @@ public class UserDialog extends JPanel implements ActionListener{
     public static String MySQLPassword(String plainText)  throws UnsupportedEncodingException
     {
         byte[] utf8 = plainText.getBytes("UTF-8");
-        byte[] test = DigestUtils.sha(DigestUtils.sha(utf8));
+        byte[] test = DigestUtils.sha1(DigestUtils.sha1(utf8));
         
         return "*" + convertToHex(test).toUpperCase();
     }
     private static String convertToHex(byte[] data) { 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < data.length; i++) { 
             int halfbyte = (data[i] >>> 4) & 0x0F;
             int two_halfs = 0;
             do { 
-                if ((0 <= halfbyte) && (halfbyte <= 9)) 
+                if ((0 <= halfbyte) && (halfbyte <= 9)) { 
                     buf.append((char) ('0' + halfbyte));
-                else 
+                }
+                else {
                     buf.append((char) ('a' + (halfbyte - 10)));
+                }
                 halfbyte = data[i] & 0x0F;
             } while(two_halfs++ < 1);
         } 

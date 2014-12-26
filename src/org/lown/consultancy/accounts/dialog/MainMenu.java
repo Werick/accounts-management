@@ -248,7 +248,10 @@ public class MainMenu extends JFrame implements ActionListener{
        //set authorization
        if(!user.hasRole("admin"))
        {
+           btnUser.setEnabled(false);
            btnGlobalProperty.setEnabled(false);
+           btnReport.setEnabled(false);
+           
        }
         
        menuDialog.setVisible(true); //making the frame visible

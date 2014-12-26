@@ -26,8 +26,10 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.ContraAccount;
 import org.lown.consultancy.accounts.ContraExpenses;
+import org.lown.consultancy.accounts.ReportDescriptor;
 import org.lown.consultancy.accounts.dao.CashDAO;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
+import org.lown.consultancy.accounts.dao.ReportsDAO;
 import org.lown.consultancy.accounts.tables.ContraExpensesTable;
 import org.lown.consultancy.accounts.tables.ExpensesList;
 
@@ -212,7 +214,7 @@ public class ContraExpensesDialog extends JPanel implements ActionListener{
         
         //Contra Expenses List Table
         contraTable2=new ExpensesList();
-        contraTable2.setBounds(20,20,550, 250);
+        contraTable2.setBounds(20,65,550, 250);
         pExpensesList.add(contraTable2);
         contraTable2.insertRow();
         
@@ -276,6 +278,17 @@ public class ContraExpensesDialog extends JPanel implements ActionListener{
             pExpensesList.setVisible(true);
             pExpenses.setVisible(false);
             btnAdd.setEnabled(false);
+            
+            //Testing Reports
+            System.out.println("Testing Reports Output");
+            ReportsDAO report=new ReportsDAO();
+            List<ReportDescriptor> demoReport=report.getPettyCashReport();
+            for(ReportDescriptor r:demoReport)
+            {
+                System.out.println(r.getTransactionDate()+"\t"+r.getDescription()+"\t"+r.getDrAmount()+"\t"+r.getCrAmount()+"\t"+r.getBalance());
+            }
+                
+            
         }
         else if(e.getActionCommand().equals(ACT_POST))
         {

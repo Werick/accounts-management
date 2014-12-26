@@ -5,26 +5,21 @@
 package org.lown.consultancy.accounts.tables;
 
 import java.awt.Dimension;
-import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import org.lown.consultancy.accounts.ContraAccount;
-import org.lown.consultancy.accounts.ContraExpenses;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.dao.CashDAO;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
 import org.lown.consultancy.accounts.dao.UserDAO;
+import org.lown.consultancy.accounts.dialog.UserDialog;
 
 /**
  *
@@ -34,22 +29,20 @@ public class UsersTable extends JPanel{
     private JTable jTable;
     private String[] columnTitle=new String[]{"user_id","Names ","User Name","User roles"};
     private static DefaultTableModel model ;
-    private Object[][] data; 
-    private CompanyDAO cs;
-    private UserDAO userDAO;
-    private List<ContraAccount> contraList;
+    private Object[][] data;     
+    private UserDAO userDAO;    
     private List<User> usersList;
-    public static User selectedSuer;
-    public static ContraExpenses selectedExpense;
+    public static User selectedUser;    
     
-    public static double selectedAmount;
+    public static int selectedUserId;
     
     public UsersTable()
     {
         model = new DefaultTableModel(data,columnTitle);
-         cs=new CompanyDAO();
-         userDAO=new UserDAO();
-         usersList=userDAO.getAllUsers();
+        
+        userDAO=new UserDAO();
+        usersList=userDAO.getAllUsers();
+        selectedUser=null;
         jTable = new JTable(model){
             public boolean isCellEditable(int rowIndex, int colIndex) {
             return false; //Disallow the editing of any cell
@@ -78,7 +71,7 @@ public class UsersTable extends JPanel{
         column = jTable.getColumnModel().getColumn(2); //Name column
         column.setPreferredWidth(100);
         
-         column = jTable.getColumnModel().getColumn(3); //Name column
+        column = jTable.getColumnModel().getColumn(3); //Name column
         column.setPreferredWidth(200);
              
         add(scrollPane);
@@ -96,18 +89,62 @@ public class UsersTable extends JPanel{
                        int selectedRow=jTable.getSelectedRow();
                        if ((selectedRow>=0)&&(jTable.getRowCount()>selectedRow))
                        {
-                            Object data = model.getValueAt(selectedRow, 4);
+                            Object data = model.getValueAt(selectedRow, 0);
                             int modelRow = jTable.convertRowIndexToModel(selectedRow);
                             System.out.println(String.format("Selected Row in view: %d. " + "Selected Row in model: %d.", selectedRow, modelRow));
                             System.out.println(String.format("Selected Row in view:  " + data.toString()));
                             
                             //selectedAccount=cs.getContraAccountByName(data.toString())   ;  
-                            selectedAmount=Double.parseDouble(data.toString());
-                            
+                            selectedUserId=Integer.parseInt(data.toString());
+                            selectedUser=userDAO.getUser(selectedUserId);
+                            if (selectedUser!=null)
+                            {
+                                UserDialog.txt_sirName.setText(selectedUser.getName());
+                                UserDialog.txt_otherNames.setText(selectedUser.getOtherNames());
+                                UserDialog.txt_userName.setText(selectedUser.getUserName());
+                                UserDialog.txt_pass.setText(selectedUser.getPassword());
+                                UserDialog.txt_confirmPass.setText(selectedUser.getPassword());
+                                
+                                //reset
+                                UserDialog.chk_accountant.setSelected(false);
+                                UserDialog.chk_admin.setSelected(false);
+                                UserDialog.chk_clerk.setSelected(false);
+                                UserDialog.chk_authenticated.setSelected(false);
+                                
+                                
+                                for(String s: selectedUser.getRoles())
+                                {
+                                    System.out.println(s);
+                                    if(s.equalsIgnoreCase(UserDialog.chk_accountant.getText()))
+                                    {
+                                        UserDialog.chk_accountant.setSelected(true);
+                                    }
+                                   
+                                    
+                                    if(s.equalsIgnoreCase(UserDialog.chk_admin.getText()))
+                                    {
+                                        UserDialog.chk_admin.setSelected(true);
+                                    }
+                                    
+                                            
+                                    
+                                    if(s.equalsIgnoreCase(UserDialog.chk_clerk.getText()))
+                                    {
+                                        UserDialog.chk_clerk.setSelected(true);
+                                    }
+                                    
+                                    
+                                    if(s.equalsIgnoreCase(UserDialog.chk_authenticated.getText()))
+                                    {
+                                        UserDialog.chk_authenticated.setSelected(true);
+                                    }
+                                    
+                                }
+                            }
                        }
                        else
                        {
-                           selectedAmount=0.0;
+                           selectedUserId=0;
                        }
                    }
                    
