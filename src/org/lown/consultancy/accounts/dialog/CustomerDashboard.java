@@ -550,7 +550,7 @@ public class CustomerDashboard extends JPanel implements ActionListener{
             if(CustomerListTable.selectedCustomer!=null)
             {
                 reportDao=new ReportsDAO();
-                customerReport=reportDao.getCustomerReport(CustomerListTable.selectedCustomer);
+                customerReport=reportDao.getCustomerStatement(CustomerListTable.selectedCustomer);
                 for(ReportDescriptor r:customerReport)
                 {
                     System.out.println(r.getTransactionDate()+"\t"+r.getDescription()+"\t"+r.getDrAmount()+"\t"+r.getCrAmount()+"\t"+r.getBalance());

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -23,10 +24,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.ReportDescriptor;
 import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.ReportsDAO;
 import org.lown.consultancy.accounts.dao.SalesDAO;
-import org.lown.consultancy.accounts.tables.PurchasesList;
+import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.PurchasesTransactions;
+import org.lown.consultancy.accounts.tables.ReportStatementTable;
 import org.lown.consultancy.accounts.tables.SupplierList;
 
 /**
@@ -40,9 +44,11 @@ public class SupplierDashboard extends JPanel implements ActionListener{
     private static final String ACT_DATERANGE="filter_by_dates";
     private static final String ACT_CREATE="add_supplier";
     private static final String ACT_EDIT="update_supplier";
-    private static final String ACT_DELETE="Print_Statement";
+    private static final String ACT_REPORT="Print_Statement";
     private static final String ACT_BACK="close";
     private static final String ACT_VIEW="view_supplier";
+    private static final String ACT_HIDE="hide_supplier";
+    private static final String ACT_EXPORT="exportReport";
     private static final Font title2Font = new Font("Times New Roman", Font.BOLD, 14);
     private static final Font title3Font = new Font("Times New Roman", Font.BOLD, 14);
     private static final String filter[]={"Select","Last 7 days","Last 30 days","Last 60 days","Last 90 days","Date Range","All"};
@@ -84,16 +90,22 @@ public class SupplierDashboard extends JPanel implements ActionListener{
     private JButton btnEdit;
     private JButton btnCreate;
     private TitledBorder titled = new TitledBorder("Find/Create Supplier (s)");
+    private TitledBorder titled1 = new TitledBorder("Supplier Statement");
     private TitledBorder titled2 = new TitledBorder("Supplier Information");
     private TitledBorder titled3 = new TitledBorder("Supplier Invoices");
     private static JDialog dlgsupplierDashboard;
     private JButton btnView;
     private JButton btnGo;
+    private JButton btnHide;
+    private JButton btnExport;
             
     private JPanel pSupplier;
     private JPanel pFind_Create;
     private JPanel pTransactions;
+    private JPanel pStatement;
+    
     private SupplierList supplierListTable;
+    private ReportStatementTable statementTable;
     public static PurchasesTransactions txListTable;
     
     public static DecimalFormat df = new DecimalFormat("#0.00");
@@ -102,7 +114,9 @@ public class SupplierDashboard extends JPanel implements ActionListener{
     public static double balance;
     
     SalesDAO ss;
+    ReportsDAO reportDao;
     PurchasesDAO ps;
+    List<ReportDescriptor> supplierReport;
     
     public SupplierDashboard()
     {
@@ -405,7 +419,7 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         
         btnStatement=new JButton("Print Statement");
         btnStatement.setBounds(10, 550, 200, 50);
-        btnStatement.setActionCommand(ACT_DELETE);
+        btnStatement.setActionCommand(ACT_REPORT);
         btnStatement.addActionListener(this);
         btnStatement.setToolTipText("Click to View the Statement of Account for the selected Customer/Company");       
         btnStatement.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -418,6 +432,33 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         btnClose.setToolTipText("Click to go back to the Home/Main Menu Window");       
         btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgsupplierDashboard.add(btnClose);
+        
+        //customer statement's penel
+        
+        pStatement=new JPanel();
+        pStatement.setBounds(600, 230, 570, 400);
+        pStatement.setBorder(titled1);  
+        pStatement.setVisible(false);
+        pStatement.setLayout(null);
+        dlgsupplierDashboard.add(pStatement);
+        
+        statementTable= new ReportStatementTable();
+        statementTable.setBounds(20,80,520, 300);        
+        pStatement.add(statementTable);
+        
+        btnHide=new JButton("Hide");
+        btnHide.setBounds(380, 30, 150, 35);
+        btnHide.setActionCommand(ACT_HIDE);
+        btnHide.addActionListener(this);
+        btnHide.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        pStatement.add(btnHide);
+        
+        btnExport=new JButton("Export to Excel");
+        btnExport.setBounds(20, 30, 150, 35);
+        btnExport.setActionCommand(ACT_EXPORT);
+        btnExport.addActionListener(this);
+        btnExport.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        pStatement.add(btnExport);
 
         
         dlgsupplierDashboard.setVisible(true);          
@@ -433,6 +474,13 @@ public class SupplierDashboard extends JPanel implements ActionListener{
             dlgsupplierDashboard.setVisible(false);
             return;
 	}
+        else if(e.getActionCommand().equals(ACT_HIDE))
+        {
+           
+            pStatement.setVisible(false);
+            pTransactions.setVisible(true);
+            btnStatement.setEnabled(true);
+        }
         else if(e.getActionCommand().equals(ACT_DATERANGE))
         {
             Date startDate=dp_startDate.getDate();            
@@ -504,9 +552,33 @@ public class SupplierDashboard extends JPanel implements ActionListener{
             }
             
         }
-        else if(e.getActionCommand().equals(ACT_DELETE))
+        else if(e.getActionCommand().equals(ACT_REPORT))
         {
+            if(SupplierList.selectedSupplier!=null)
+            {
+                reportDao=new ReportsDAO();
+                supplierReport=reportDao.getSupplierStatement(SupplierList.selectedSupplier);
+                double debits=0;
+                double credits=0;
+                for(ReportDescriptor r:supplierReport)
+                {
+                    debits+=r.getDrAmount();
+                    credits+=r.getCrAmount();
+                    System.out.println(r.getTransactionDate()+"\t"+r.getDescription()+"\t"+r.getDrAmount()+"\t"+r.getCrAmount()+"\t"+r.getBalance());
+                }
+                System.out.println("Total Debits: "+debits+"\t Total Credits: "+credits);
+                pTransactions.setVisible(false);
+                pStatement.setVisible(true);
+                statementTable.insertSupplierStatement(SupplierList.selectedSupplier);
+                btnStatement.setEnabled(false);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "No Supplier is Selected");
+            }
             
+            
+            return;
         }
         else if(e.getActionCommand().equals(ACT_EDIT))
         {

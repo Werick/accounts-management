@@ -162,7 +162,10 @@ public class StockDAO {
         {
             //log info
             AccountsManagement.logger.info("Getting Category Details given the internal DB id... ");
-            String sqlStmt="Select stock_id,product_id,buyprice,sellprice,quantity,reorderlevel,if(vat=1,true,false) as vat from stock WHERE voided=0";
+            String sqlStmt="Select stock_id,s.product_id,buyprice,sellprice,quantity,reorderlevel,if(vat=1,true,false) as vat ";
+            sqlStmt+="from stock s  ";
+            sqlStmt+="join product p on p.product_id=s.product_id and p.voided=0 ";
+            sqlStmt+="WHERE s.voided=0 order by p.productcode asc;";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);
             while (rs.next())

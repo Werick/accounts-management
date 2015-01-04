@@ -145,6 +145,46 @@ public class CustomerDAO {
         return c;
     }
     
+    public List<Customer> getAllCustomers()
+    {
+        List<Customer> custList=new ArrayList<Customer>();
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Get List of Customers given the search criteria... ");
+            String sqlStmt="Select customer_id,customername,customernumber,phone,address, contactperson ";
+            sqlStmt+="from customer WHERE voided=0 order by customernumber; "; //            
+          
+            AccountsManagement.logger.info("Executing Query: " + sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                Customer c = new Customer();
+                c.setCustomerNumber(rs.getString("customernumber"));  
+                c.setCustomerName(rs.getString("customername"));
+                c.setAddress(rs.getString("address"));
+                c.setPhone(rs.getString("phone"));
+                c.setContactPerson(rs.getString("contactperson"));                
+                c.setCustomer_id(rs.getInt("customer_id"));              
+                custList.add(c);
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+//        finally
+//        {
+//            Sql.Close();//close open connection
+//        }
+	 
+        return custList;
+    }
+    
     public List<Customer> getCustomerByName(String search)
     {
         List<Customer> custList=new ArrayList<Customer>();

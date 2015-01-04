@@ -19,7 +19,6 @@ import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
-import org.lown.consultancy.accounts.dao.PDFWriter;
 import org.lown.consultancy.accounts.dao.PurchasesDAO;
 import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.dao.StockDAO;
@@ -299,6 +298,12 @@ public class MainMenu extends JFrame implements ActionListener{
             AccountsManagement.logger.info("Loading global properties Dialog... ");            
             //PDFWriter pdfWriter=new PDFWriter(); 
             GPDialog.createAndShowGUI(); 
+            return;
+	}
+        else if(e.getActionCommand().equals(ACT_REPORT))
+        {
+            AccountsManagement.logger.info("Loading Reports Dialog... ");              
+            ReportsDialog.createAndShowGUI(); 
             return;
 	}
         else if(e.getActionCommand().equals(ACT_TREASURY))

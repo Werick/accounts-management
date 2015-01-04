@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
-import org.lown.consultancy.accounts.tables.AccountsTable;
 import org.lown.consultancy.accounts.tables.GPTable;
 
 /**

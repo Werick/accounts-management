@@ -23,6 +23,7 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.ContraExpenses;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.ReportDescriptor;
+import org.lown.consultancy.accounts.Supplier;
 import org.lown.consultancy.accounts.dao.ReportsDAO;
 
 /**
@@ -97,7 +98,7 @@ public class ReportStatementTable extends JPanel{
                });
     }
     
-    public void insertCustomerStatement(Customer c)
+    public void formatCells()
     {
         //format columns
         //set coulmun size
@@ -124,14 +125,38 @@ public class ReportStatementTable extends JPanel{
         jTable.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);//amount
         jTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);//amount
         jTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);//amount
+    }
+    
+    public void insertCustomerStatement(Customer c)
+    {
         
-       
-        
+        formatCells();     
         //remove all rows      
         model.getDataVector().removeAllElements();
         jTable.repaint();   
         
-        report=reportDao.getCustomerReport(c);
+        report=reportDao.getCustomerStatement(c);
+        //list all available product categories from the database
+        if(!report.isEmpty())
+         {           
+            for(ReportDescriptor r:report)
+            {
+                System.out.println(r.getTransactionDate()+"\t"+r.getDescription()+"\t"+r.getDrAmount()+"\t"+r.getCrAmount()+"\t"+r.getBalance());
+                model.insertRow(jTable.getRowCount(),new Object[]{dateF.format(r.getTransactionDate()),r.getDescription(), df.format(r.getDrAmount()),df.format(r.getCrAmount()),df.format(r.getBalance())});
+            }
+          }
+
+    }
+    
+    public void insertSupplierStatement(Supplier s)
+    {
+        
+        formatCells();     
+        //remove all rows      
+        model.getDataVector().removeAllElements();
+        jTable.repaint();   
+        
+        report=reportDao.getSupplierStatement(s);
         //list all available product categories from the database
         if(!report.isEmpty())
          {           

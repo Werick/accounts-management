@@ -17,7 +17,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.User;
-import org.lown.consultancy.accounts.dao.CompanyDAO;
 import org.lown.consultancy.accounts.dao.UserDAO;
 import org.lown.consultancy.accounts.dialog.UserDialog;
 

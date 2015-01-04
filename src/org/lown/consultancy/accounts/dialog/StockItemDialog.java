@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -125,12 +126,14 @@ public class StockItemDialog extends JPanel implements ActionListener{
         btnUpdate.setBounds(450, 550, 120, 50);
         btnUpdate.setActionCommand(ACT_UPDATE);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgStockItem.add(btnUpdate);        
         
         btnClose=new JButton("Back");
         btnClose.setBounds(650, 550, 120, 50);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgStockItem.add(btnClose);
     }
   

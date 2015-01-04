@@ -28,12 +28,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.Customer;
 import org.lown.consultancy.accounts.Product;
-import org.lown.consultancy.accounts.Purchase;
 import org.lown.consultancy.accounts.SalesItem;
 import org.lown.consultancy.accounts.SalesTransaction;
 import org.lown.consultancy.accounts.dao.InvoicePrinter;
@@ -41,9 +39,6 @@ import org.lown.consultancy.accounts.dao.ProductDAO;
 import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ItemListTable;
-import org.lown.consultancy.accounts.tables.PurchasesList;
-import org.lown.consultancy.accounts.tables.PurchasesTransactions;
-import org.lown.consultancy.accounts.tables.SupplierList;
 import org.lown.consultancy.accounts.tables.TransactionsTable;
 
 /**

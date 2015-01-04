@@ -190,6 +190,48 @@ public class SupplierDAO {
         return spList;
     }
     
+    public List<Supplier> getAllSuppliers()
+    {
+        List<Supplier> spList=new ArrayList<Supplier>();
+        Supplier sp=null;
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Get List of of All suppliers... ");
+            String sqlStmt="Select supplier_id,sname,number,phone,address, contactperson, pin ";
+            sqlStmt+=" from supplier WHERE voided=0 "; //
+            sqlStmt+="  order by number asc;";
+          
+            AccountsManagement.logger.info("Executing Query: " + sqlStmt);
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                sp=new Supplier();
+                sp.setSupplierName(rs.getString("sname"));  
+                sp.setSupplierNumber(rs.getString("number"));
+                sp.setContactPerson(rs.getString("contactperson"));
+                sp.setAddress(rs.getString("address"));
+                sp.setPhone(rs.getString("phone"));               
+                sp.setSupplier_id(rs.getInt("supplier_id"));
+                sp.setPin(rs.getString("pin"));
+                spList.add(sp);
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+//        finally
+//        {
+//            Sql.Close();//close open connection
+//        }
+	 
+        return spList;
+    }
     /**
      * Check if Identifier already exists
      * @param identifier
