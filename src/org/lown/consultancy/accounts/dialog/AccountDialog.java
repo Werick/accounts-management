@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
+import org.lown.consultancy.accounts.tables.AccountsTable;
 
 /**
  *
@@ -33,6 +35,8 @@ public class AccountDialog extends JPanel implements ActionListener{
     private static final String ACT_DELETE="delete";
     private static final String ACT_BACK="close";
     private static final String ACT_VIEW="view_account";
+    private static final String ACT_DISPLAY="display_account";
+    private static final String ACT_HIDE="hide_account";
     
     private JLabel lbl_accountName;
     private JLabel lbl_accountNumber;
@@ -57,15 +61,22 @@ public class AccountDialog extends JPanel implements ActionListener{
     private JButton btnClose;
     private static JButton btnDelete;
     private JButton btnView;
+    private JButton btnHide;
+    private JButton btnDisplay;
     
     private static JDialog dlgAccount;
     private static Account account;
+    
+    private AccountsTable accountsTable;
+    
     private JPanel pDetails;
+    private JPanel pAccounts;
     
     public static final Font title2Font = new Font("Times New Roman", Font.BOLD, 16);
     public static final Font title3Font = new Font("Times New Roman", Font.BOLD, 14);
      //Border Titles
     private TitledBorder accountTitle = new TitledBorder("Account Details");
+    private TitledBorder accountTitle2 = new TitledBorder("List of Accounts");
     
     private CompanyDAO cs;
    
@@ -85,7 +96,34 @@ public class AccountDialog extends JPanel implements ActionListener{
         pDetails.setBounds(20, 20, 600, 270);
         pDetails.setBorder(accountTitle);  
         pDetails.setLayout(null);
-        dlgAccount.add( pDetails);
+        dlgAccount.add( pDetails);       
+        
+        pAccounts=new JPanel();
+        pAccounts.setBounds(10, 5, 600, 295);
+        pAccounts.setBorder(accountTitle2);  
+        pAccounts.setLayout(null);
+        pAccounts.setVisible(false);        
+        dlgAccount.add( pAccounts);
+        
+        //Category List Table
+        accountsTable=new AccountsTable();
+        accountsTable.setBounds(20,20,550, 225);
+        pAccounts.add(accountsTable);
+        accountsTable.insertRow();
+        
+        btnHide=new JButton("Hide");
+        btnHide.setBounds(450, 260, 120, 25);
+        btnHide.setActionCommand(ACT_HIDE);
+        btnHide.addActionListener(this);
+        btnHide.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        pAccounts.add(btnHide);
+        
+        btnDisplay=new JButton("View Account");
+        btnDisplay.setBounds(30, 260, 120, 25);
+        btnDisplay.setActionCommand(ACT_DISPLAY);
+        btnDisplay.addActionListener(this);
+        btnDisplay.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        pAccounts.add(btnDisplay);
         
         lbl_accountNumber=new JLabel();
         lbl_accountNumber.setBounds(10, 30, 150, 25);         
@@ -149,28 +187,39 @@ public class AccountDialog extends JPanel implements ActionListener{
         
         //buttons
         btnSave=new JButton("Add Account");
-        btnSave.setBounds(450, 50, 110, 25);
+        btnSave.setBounds(450, 50, 120, 25);
         btnSave.setActionCommand(ACT_SAVE);
         btnSave.addActionListener(this);
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pDetails.add(btnSave);
         
         btnUpdate=new JButton("Update");
-        btnUpdate.setBounds(450, 90, 110, 25);
+        btnUpdate.setBounds(450, 90, 120, 25);
         btnUpdate.setActionCommand(ACT_UPDATE);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pDetails.add(btnUpdate);
         
         btnDelete=new JButton("Delete");
-        btnDelete.setBounds(450, 130, 110, 25);
+        btnDelete.setBounds(450, 130, 120, 25);
         btnDelete.setActionCommand(ACT_DELETE);
-        btnDelete.addActionListener(this);
-        //btnDelete.setEnabled(false);
+        btnDelete.addActionListener(this); 
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pDetails.add(btnDelete);
         
+        btnView=new JButton("View Accounts");
+        btnView.setBounds(450, 170, 120, 25);
+        btnView.setActionCommand(ACT_VIEW);
+        btnView.addActionListener(this);
+        btnView.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        pDetails.add(btnView);   
+        
         btnClose=new JButton("Back");
-        btnClose.setBounds(450, 170, 110, 25);
+        btnClose.setBounds(450, 210, 120, 25);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setToolTipText("Click to go back to the Home/Main Menu Window");       
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pDetails.add(btnClose);        
     }
     
@@ -182,8 +231,42 @@ public class AccountDialog extends JPanel implements ActionListener{
             dlgAccount.setVisible(false);
             return;
 	}
-        if(btnSave.getText().equalsIgnoreCase("Add Account"))
+        else if(e.getActionCommand().equals(ACT_VIEW))
         {
+            pDetails.setVisible(false);
+            pAccounts.setVisible(true);
+            return;
+	}
+        else if(e.getActionCommand().equals(ACT_DISPLAY))
+        {
+            if (AccountsTable.selectedAccount!=null)
+            {
+                pAccounts.setVisible(false);
+                pDetails.setVisible(true);
+                account=new Account();
+                account=AccountsTable.selectedAccount;
+                txt_accountName.setText(account.getAccount_name());
+                txt_accountNumber.setText(account.getAccount_number());
+                txt_bankName.setText(account.getBank_name());
+                txt_branch.setText(account.getBranch());  
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "No Account is Selected...");
+            }
+           
+            return;
+	}
+        else if(e.getActionCommand().equals(ACT_HIDE))
+        {
+            pAccounts.setVisible(false);
+            pDetails.setVisible(true);
+            return;
+	}
+        else if(e.getActionCommand().equals(ACT_SAVE))
+        {
+            if(btnSave.getText().equalsIgnoreCase("Add Account"))
+            {
                //clear the text boxes to allow addtion of new category record
                btnSave.setText("Save"); 
                btnUpdate.setText("Cancel");
@@ -195,41 +278,42 @@ public class AccountDialog extends JPanel implements ActionListener{
                txt_openBalance.setText("");
                cbo_category.setSelectedIndex(0);
                return;
-        }
-        else  if(btnSave.getText().equalsIgnoreCase("Save"))
-        {
-            if(validateInput())
-            {
-                account=new Account();
-                Cash cashTx =new Cash();
-                cs=new CompanyDAO();
-                account.setAccount_number(txt_accountNumber.getText());
-                account.setAccount_name(txt_accountName.getText());
-                account.setBranch(txt_branch.getText());
-                account.setBank_name(txt_bankName.getText());
-                account.setCategory(cbo_category.getSelectedItem().toString());
-                                        
-                if (isNumeric(txt_openBalance.getText()))
-                {
-                    account.setOpen_balance(Double.parseDouble(txt_openBalance.getText()));
-                    cashTx.setAmount(Double.parseDouble(txt_openBalance.getText()));
-                }   
-                cashTx.setTxType("DR");
-                cashTx.setDate(new java.util.Date());               
-                cashTx.setAccount(cbo_category.getSelectedItem().toString());
-                    
-                try {
-                     cs.saveAccount(account,cashTx);
-                        
-                } catch (SQLException ex) {
-                 Logger.getLogger(CategoryDialog.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                btnSave.setText("Add Account"); 
-                btnUpdate.setText("Update");
-                btnDelete.setEnabled(true);
             }
-        }
+            else  if(btnSave.getText().equalsIgnoreCase("Save"))
+            {
+                if(validateInput())
+                {
+                    account=new Account();
+                    Cash cashTx =new Cash();
+                    cs=new CompanyDAO();
+                    account.setAccount_number(txt_accountNumber.getText());
+                    account.setAccount_name(txt_accountName.getText());
+                    account.setBranch(txt_branch.getText());
+                    account.setBank_name(txt_bankName.getText());
+                    account.setCategory(cbo_category.getSelectedItem().toString());
+                                        
+                    if (isNumeric(txt_openBalance.getText()))
+                    {
+                        account.setOpen_balance(Double.parseDouble(txt_openBalance.getText()));
+                        cashTx.setAmount(Double.parseDouble(txt_openBalance.getText()));
+                    }   
+                    cashTx.setTxType("DR");
+                    cashTx.setDate(new java.util.Date());               
+                    cashTx.setAccount(cbo_category.getSelectedItem().toString());
+                    
+                    try {
+                        cs.saveAccount(account,cashTx);
+                        
+                    } catch (SQLException ex) {
+                        Logger.getLogger(CategoryDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                
+                    btnSave.setText("Add Account"); 
+                    btnUpdate.setText("Update");
+                    btnDelete.setEnabled(true);
+                }
+            }
+	}        
         else if(e.getActionCommand().equals(ACT_UPDATE))
         {
             if(btnUpdate.getText().equalsIgnoreCase("Cancel"))
@@ -281,11 +365,7 @@ public class AccountDialog extends JPanel implements ActionListener{
                 }
             }
             return; 
-        }
-        
-                    
-                
-                return;
+        }   
     }
      
      public static void createAndShowGUI()

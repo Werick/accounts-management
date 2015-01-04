@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +41,7 @@ public class TreasuryDialog extends JPanel implements ActionListener{
     private static final String ACT_BANK="manage_Bank";    ;
     private static final String ACT_SOURCE="source_account";  
     private static final String ACT_PETTYCASH="petty_account";  
+    private static final String ACT_CASHBOOK="cash_account";  
     private static final String ACT_CONTRA="contra_accounts";  
     private static final String ACT_BACK="close";
     private static final String ACT_TRANSFER="transfer_money";
@@ -49,6 +51,7 @@ public class TreasuryDialog extends JPanel implements ActionListener{
     private static JDialog dlgTreasury;
     
     private JButton btnBank;
+    private JButton btnCashBook;
     private JButton btnContra;
     private JButton btnExpenses;
     private JButton btnTransfer;
@@ -203,37 +206,50 @@ public class TreasuryDialog extends JPanel implements ActionListener{
         btnUpdate.setBounds(150, 350, 150, 40);
         btnUpdate.setActionCommand(ACT_TRANSFER);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pTransfers.add(btnUpdate); 
         
         
         btnBank=new JButton("Bank Accounts");
-        btnBank.setBounds(20, 50, 150, 50);
+        btnBank.setBounds(20, 30, 150, 50);
         btnBank.setActionCommand(ACT_BANK);
         btnBank.addActionListener(this);
+        btnBank.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTreasury.add(btnBank);    
         
         btnTransfer=new JButton("Reconcile Accounts");
-        btnTransfer.setBounds(20, 120, 150, 50);
+        btnTransfer.setBounds(20, 100, 150, 50);
         btnTransfer.setActionCommand(ACT_TRANSFER);
         btnTransfer.addActionListener(this);
+        btnTransfer.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTreasury.add(btnTransfer); 
         
         btnContra=new JButton("Contra Accounts");
-        btnContra.setBounds(20, 190, 150, 50);
+        btnContra.setBounds(20, 170, 150, 50);
         btnContra.setActionCommand(ACT_CONTRA);
         btnContra.addActionListener(this);
+        btnContra.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTreasury.add(btnContra); 
         
         btnExpenses=new JButton("Petty Cash");
-        btnExpenses.setBounds(20, 260, 150, 50);
+        btnExpenses.setBounds(20, 240, 150, 50);
         btnExpenses.setActionCommand(ACT_PETTYCASH);
         btnExpenses.addActionListener(this);
+        btnExpenses.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTreasury.add(btnExpenses); 
         
+        btnCashBook=new JButton("Cash Book");
+        btnCashBook.setBounds(20, 310, 150, 50);
+        btnCashBook.setActionCommand(ACT_CASHBOOK);
+        btnCashBook.addActionListener(this);
+        btnCashBook.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        dlgTreasury.add(btnCashBook);
+        
         btnClose=new JButton("Back");
-        btnClose.setBounds(20, 330, 150, 50);
+        btnClose.setBounds(20, 380, 150, 50);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTreasury.add(btnClose);
         
     }

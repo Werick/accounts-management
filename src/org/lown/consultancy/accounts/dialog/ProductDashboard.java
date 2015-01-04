@@ -24,7 +24,6 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
 import org.lown.consultancy.accounts.dao.CategoryDAO;
 import org.lown.consultancy.accounts.tables.CategoryListTable;
-import org.lown.consultancy.accounts.tables.CustomerListTable;
 import org.lown.consultancy.accounts.tables.ProductListTable;
 
 /**
@@ -43,7 +42,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
      private static final String ACT_SAVECATEGORY="save_add";
     private static final String ACT_UPDATECATEGORY="update_cancel";
     private static final String ACT_DELETECATEGORY="delete";
-    private static final String ACT_BACKCATEGORY="close";
+   
     
     public static final Font title2Font = new Font("Times New Roman", Font.BOLD, 16);
     public static final Font title3Font = new Font("Times New Roman", Font.BOLD, 14);
@@ -81,13 +80,13 @@ public class ProductDashboard extends JPanel implements ActionListener{
     private ProductListTable productListTable;
     
     //product categories
-     private JLabel lbl_categoryName;
+    private JLabel lbl_categoryName;
     private JLabel lbl_categoryCode;
     private JLabel lbl_title;
     private JLabel lbl_title2;
     
-    private JTextField txt_categoryName;
-    private JTextField txt_categoryCode;
+    public static JTextField txt_categoryName;
+    public static JTextField txt_categoryCode;
     
     private JButton btnSaveCategory;
     private JButton btnUpdateCategory;
@@ -108,6 +107,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
         titled2.setTitleFont(title2Font);
         titled3.setTitleFont(title2Font);
         titled1.setTitleFont(title2Font);
+        titled.setTitleFont(title2Font);
         
         pProductCategory=new JPanel();
         pProductCategory.setBounds(610, 20, 550, 500);
@@ -173,7 +173,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
         
         //Category List Table
         categoryListTable=new CategoryListTable();
-        categoryListTable.setBounds(50,180,400, 200);
+        categoryListTable.setBounds(50,180,450, 200);
         pProductCategory.add(categoryListTable);
         categoryListTable.insertRow();
         
@@ -302,6 +302,32 @@ public class ProductDashboard extends JPanel implements ActionListener{
             else if(btnUpdateCategory.getText().equalsIgnoreCase("Update"))
             {
                 //do some update stuff
+                if (txt_categoryCode.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Category code Missing...");
+                    return;                    
+                }
+                if (txt_categoryName.getText().isEmpty())
+                {
+                    JOptionPane.showMessageDialog(null, "Category Name Missing...");
+                    return;                    
+                }
+                
+                if(CategoryListTable.selectedCategory!=null)
+                {
+                    productCategory=CategoryListTable.selectedCategory;
+                    categoryService=new CategoryDAO();
+                    productCategory.setCategoryCode(txt_categoryCode.getText());
+                    productCategory.setCategoryName(txt_categoryName.getText()); 
+                    
+                    try {
+                        categoryService.updateCategory(productCategory);
+                        //categoryListTable.insertRow(productCategory);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(CategoryDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
             }
 	}
         else if(e.getActionCommand().equals(ACT_SAVECATEGORY))
@@ -314,6 +340,7 @@ public class ProductDashboard extends JPanel implements ActionListener{
                btnDeleteCategory.setEnabled(false);
                txt_categoryName.setText("");
                txt_categoryCode.setText("");
+               CategoryListTable.selectedCategory=null;
                return;
             }
             else  if(btnSaveCategory.getText().equalsIgnoreCase("Save Category"))

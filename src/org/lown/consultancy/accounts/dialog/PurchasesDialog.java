@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -521,30 +522,35 @@ public class PurchasesDialog extends JPanel implements ActionListener{
         btnAdd.setBounds(730, 100, 100, 25);
         btnAdd.setActionCommand(ACT_ADD);
         btnAdd.addActionListener(this);
+        btnAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pPurchaseItems.add(btnAdd);
         
         btnDelete=new JButton("Drop Item");
         btnDelete.setBounds(730, 140, 100, 25);
         btnDelete.setActionCommand(ACT_DELETE);
         btnDelete.addActionListener(this);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pPurchaseItems.add(btnDelete);
         
         btnPostTx=new JButton("Post Purchase");
         btnPostTx.setBounds(50, 400, 140, 45);  //615
         btnPostTx.setActionCommand(ACT_SAVE);
         btnPostTx.addActionListener(this);
+        btnPostTx.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pPurchaseItems.add(btnPostTx);
         
         btnPrintInvoice=new JButton("Cancel Purchase");
         btnPrintInvoice.setBounds(50, 460, 140, 45); //645
         btnPrintInvoice.setActionCommand(ACT_CANCEL);
         btnPrintInvoice.addActionListener(this);
+        btnPrintInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pPurchaseItems.add(btnPrintInvoice);
         
         btnBack=new JButton("Close");
         btnBack.setBounds(720, 460, 140, 45); //675
         btnBack.setActionCommand(ACT_BACK);
         btnBack.addActionListener(this);
+        btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pPurchaseItems.add(btnBack);
         
         

@@ -4,12 +4,14 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -22,8 +24,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdesktop.swingx.JXDatePicker;
 import org.lown.consultancy.accounts.AccountsManagement;
+import org.lown.consultancy.accounts.ReportDescriptor;
+import org.lown.consultancy.accounts.dao.ReportsDAO;
 import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.tables.CustomerListTable;
+import org.lown.consultancy.accounts.tables.ReportStatementTable;
 import org.lown.consultancy.accounts.tables.TransactionsTable;
 
 /**
@@ -37,9 +42,11 @@ public class CustomerDashboard extends JPanel implements ActionListener{
     private static final String ACT_PAY="receive_pay";
     private static final String ACT_CREATE="add_customer";
     private static final String ACT_EDIT="update_customer";
-    private static final String ACT_DELETE="Print_Statement";
+    private static final String ACT_REPORT="Print_Statement";
     private static final String ACT_BACK="close";
     private static final String ACT_VIEW="view_customer";
+    private static final String ACT_HIDE="hide_customer";
+    private static final String ACT_EXPORT="exportReport";
     
     private static final String filter[]={"Select","Last 7 days","Last 30 days","Last 60 days","Last 90 days","Date Range","All"};
     
@@ -82,10 +89,15 @@ public class CustomerDashboard extends JPanel implements ActionListener{
     private JButton btnClose;
     private JButton btnStatement;
     private JButton btnEdit;
+    private JButton btnHide;
     private JButton btnCreate;
+    private JButton btnExport;
+    
     private TitledBorder titled = new TitledBorder("Find/Create Customer (s)");
+    private TitledBorder titled1 = new TitledBorder("Customer Statement");
     private TitledBorder titled2 = new TitledBorder("Customer Information");
     private TitledBorder titled3 = new TitledBorder("Customer Transactions");
+    
     private static JDialog dlgCustomerDashboard;
     private JButton btnView;
      private JButton btnGo;
@@ -93,7 +105,9 @@ public class CustomerDashboard extends JPanel implements ActionListener{
     private JPanel pCustomer;
     private JPanel pFind_Create;
     private JPanel pTransactions;
+    private JPanel pStatement;
     private CustomerListTable customerListTable;
+    private ReportStatementTable statementTable;
     public static TransactionsTable txListTable;
     
     public static DecimalFormat df = new DecimalFormat("#0.00");
@@ -102,6 +116,10 @@ public class CustomerDashboard extends JPanel implements ActionListener{
     public static double balance;
     
     SalesDAO ss;
+    ReportsDAO reportDao;
+    List<ReportDescriptor> customerReport;
+    
+    
     public CustomerDashboard()
     {
         totalSales=0.0;
@@ -194,7 +212,8 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         btnCreate.setBounds(395, 40, 135, 25); 
         btnCreate.setActionCommand(ACT_CREATE);
         btnCreate.addActionListener(this);  
-        btnCreate.setToolTipText("Click to Create/Add a new customer/company.");
+        btnCreate.setToolTipText("Click to Create/Add a new customer/company.");       
+        btnCreate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pFind_Create.add(btnCreate);
        
         lbl_Search=new JLabel();
@@ -382,6 +401,8 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         btnEdit.setBounds(260, 20, 60, 25);
         btnEdit.setActionCommand(ACT_EDIT);
         btnEdit.addActionListener(this);
+        btnEdit.setToolTipText("Click to Edit/Update customer/company info");       
+        btnEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pCustomer.add(btnEdit);       
         
         
@@ -389,27 +410,58 @@ public class CustomerDashboard extends JPanel implements ActionListener{
         btnSale.setBounds(10, 450, 200, 50);
         btnSale.setActionCommand(ACT_NEW);
         btnSale.addActionListener(this);
+        btnSale.setToolTipText("Click to add New Sales");       
+        btnSale.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomerDashboard.add(btnSale);
         
         btnUpdate=new JButton("Receive Payment");
         btnUpdate.setBounds(300, 450, 200, 50);
         btnUpdate.setActionCommand(ACT_PAY);
         btnUpdate.addActionListener(this);
+        btnUpdate.setToolTipText("Click to Receive Payments from the selected Customer/Company");       
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomerDashboard.add(btnUpdate);
         
         btnStatement=new JButton("Print Statement");
         btnStatement.setBounds(10, 550, 200, 50);
-        btnStatement.setActionCommand(ACT_DELETE);
-        btnStatement.addActionListener(this);
-        //btnStatement.setEnabled(false);
+        btnStatement.setActionCommand(ACT_REPORT);
+        btnStatement.addActionListener(this);      
+        btnStatement.setToolTipText("Click to View the Statement of Account for the selected Customer/Company");       
+        btnStatement.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomerDashboard.add(btnStatement);
         
         btnClose=new JButton("Close");
         btnClose.setBounds(300, 550, 200, 50);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setToolTipText("Click to go back to the Home/Main Menu Window");       
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomerDashboard.add(btnClose);
-
+        
+        //customer statement's penel
+        
+        pStatement=new JPanel();
+        pStatement.setBounds(600, 230, 570, 400);
+        pStatement.setBorder(titled1);  
+        pStatement.setVisible(false);
+        pStatement.setLayout(null);
+        dlgCustomerDashboard.add(pStatement);
+        
+        statementTable= new ReportStatementTable();
+        statementTable.setBounds(20,80,520, 300);        
+        pStatement.add(statementTable);
+        
+        btnHide=new JButton("Hide");
+        btnHide.setBounds(380, 30, 150, 35);
+        btnHide.setActionCommand(ACT_HIDE);
+        btnHide.addActionListener(this);
+        pStatement.add(btnHide);
+        
+        btnExport=new JButton("Export to Excel");
+        btnExport.setBounds(20, 30, 150, 35);
+        btnExport.setActionCommand(ACT_EXPORT);
+        btnExport.addActionListener(this);
+        pStatement.add(btnExport);
         
         dlgCustomerDashboard.setVisible(true);          
         dlgCustomerDashboard.dispose(); //close the app once done
@@ -431,9 +483,7 @@ public class CustomerDashboard extends JPanel implements ActionListener{
             System.out.println("Start Date: "+startDate+"\t End Date:"+endDate);
 	}
         else if(e.getActionCommand().equals(ACT_FILTER))
-        {
-            
-            
+        {         
             dp_endDate.setEnabled(false);
             dp_startDate.setEnabled(false);
             btnGo.setEnabled(false);
@@ -495,9 +545,35 @@ public class CustomerDashboard extends JPanel implements ActionListener{
             }
             
         }
-        else if(e.getActionCommand().equals(ACT_DELETE))
+        else if(e.getActionCommand().equals(ACT_REPORT))
         {
+            if(CustomerListTable.selectedCustomer!=null)
+            {
+                reportDao=new ReportsDAO();
+                customerReport=reportDao.getCustomerReport(CustomerListTable.selectedCustomer);
+                for(ReportDescriptor r:customerReport)
+                {
+                    System.out.println(r.getTransactionDate()+"\t"+r.getDescription()+"\t"+r.getDrAmount()+"\t"+r.getCrAmount()+"\t"+r.getBalance());
+                }
+                pTransactions.setVisible(false);
+                pStatement.setVisible(true);
+                statementTable.insertCustomerStatement(CustomerListTable.selectedCustomer);
+                btnStatement.setEnabled(false);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "No Customer is Selected");
+            }
+            
+            
             return;
+        }
+        else if(e.getActionCommand().equals(ACT_HIDE))
+        {
+           
+            pStatement.setVisible(false);
+            pTransactions.setVisible(true);
+            btnStatement.setEnabled(true);
         }
         else if(e.getActionCommand().equals(ACT_EDIT))
         {
@@ -519,9 +595,7 @@ public class CustomerDashboard extends JPanel implements ActionListener{
               CustomerListTable.selectedCustomer=null;       
               clearFields();   
               CustomerDialog.createAndShowGUI();
-	}
-
-        
+	}        
         
     }
     private void filterTransactions(int days)

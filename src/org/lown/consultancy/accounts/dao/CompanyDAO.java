@@ -17,7 +17,9 @@ import org.lown.consultancy.accounts.Account;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Cash;
 import org.lown.consultancy.accounts.ContraAccount;
+import org.lown.consultancy.accounts.GlobalProperty;
 import org.lown.consultancy.accounts.Sql;
+import org.lown.consultancy.accounts.Stock;
 import org.lown.consultancy.accounts.dialog.MainMenu;
 
 /**
@@ -34,13 +36,114 @@ public class CompanyDAO {
         
     }
     
+    public GlobalProperty getGlobalProperty(String property)
+    {
+        GlobalProperty gp=new GlobalProperty();
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Loading Global Properties... ");
+            String sqlStmt="Select * from global_property where property='"+property+"';";
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {                
+                gp.setProperty(rs.getString("property"));
+                gp.setPropertyValue(rs.getString("property_value"));
+                gp.setDescription(rs.getString("description")); 
+                gp.setUuid(rs.getString("uuid"));
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+        
+        return gp;
+    }
+    /*
+     * Update a list of stock Items 
+     */
+    
+    public void updateGlobalProperty(List<GlobalProperty> gpList) throws SQLException
+    {
+         try
+         {
+             //log info
+             AccountsManagement.logger.info("Updating Global Property Details... ");
+             
+             Sql.getConnection().setAutoCommit(false) ;            
+                //Update the stock Item
+             for(GlobalProperty gp:gpList)
+             {
+                 preppedStmtUpdate="UPDATE global_property set property=?, property_value=?, description=?  WHERE uuid=? ";
+                 PreparedStatement pst=Sql.getConnection().prepareStatement(preppedStmtUpdate);            
+            
+                 pst.setString(1, gp.getProperty());            
+                 pst.setString(2, gp.getPropertyValue());
+                 pst.setString(3, gp.getDescription());  
+                 pst.setString(4, gp.getUuid());                                 
+                 pst.executeUpdate();           
+             }
+             
+            Sql.getConnection().commit(); //commit transaction if successful
+            JOptionPane.showMessageDialog(null, "Record(s) Updated...");
+         }
+         catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            //Log error
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+            Sql.getConnection().rollback();
+         }
+
+    }
+    
+    public List<GlobalProperty> getGlobalPropertyList()
+    {
+        List<GlobalProperty> globalPropertyList=new ArrayList<GlobalProperty>();
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Loading Global Properties... ");
+            String sqlStmt="Select * from global_property";
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+                GlobalProperty gp=new GlobalProperty();
+                gp.setProperty(rs.getString("property"));
+                gp.setPropertyValue(rs.getString("property_value"));
+                gp.setDescription(rs.getString("description"));
+                gp.setUuid(rs.getString("uuid"));
+                globalPropertyList.add(gp);                            
+            }
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e.toString());
+         }
+        
+        return globalPropertyList;
+    }
+    
     public Map<String,String> getCompanyDetails()
     {
         companyDetails=new HashMap<String,String>();
         try
         {
             //log info
-            AccountsManagement.logger.info("Getting Customer Details given the internal DB id... ");
+            AccountsManagement.logger.info("Loading Global Properties... ");
             String sqlStmt="Select * from global_property";
            
             ResultSet rs=Sql.executeQuery(sqlStmt);

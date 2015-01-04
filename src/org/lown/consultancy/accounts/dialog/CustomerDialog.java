@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -156,13 +157,14 @@ public class CustomerDialog extends JPanel implements ActionListener, FocusListe
         btnSave.setBounds(50, 300, 120, 40);
         btnSave.setActionCommand(ACT_SAVE);
         btnSave.addActionListener(this);
-        //btnSave.setEnabled(false);
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomer.add(btnSave);
         
         btnCancel=new JButton("Update");
         btnCancel.setBounds(200, 300, 120, 40);
         btnCancel.setActionCommand(ACT_CANCEL);
         btnCancel.addActionListener(this);
+        btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomer.add(btnCancel);      
         
        // btnFind=new JButton("Find");
@@ -175,6 +177,7 @@ public class CustomerDialog extends JPanel implements ActionListener, FocusListe
         btnDelete.setBounds(350, 300, 120, 40);
         btnDelete.setActionCommand(ACT_DELETE);
         btnDelete.addActionListener(this);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnDelete.setEnabled(false);
         dlgCustomer.add(btnDelete);
         
@@ -182,6 +185,7 @@ public class CustomerDialog extends JPanel implements ActionListener, FocusListe
         btnBack.setBounds(500, 300, 120, 40);
         btnBack.setActionCommand(ACT_BACK);
         btnBack.addActionListener(this);
+        btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgCustomer.add(btnBack);
         
        

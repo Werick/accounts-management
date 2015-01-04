@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -149,83 +150,29 @@ public class ProductDialog extends JPanel implements ActionListener{
         btnSave.setBounds(500, 50, 110, 25);
         btnSave.setActionCommand(ACT_SAVE);
         btnSave.addActionListener(this);
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgProduct.add(btnSave);
         
         btnUpdate=new JButton("Update");
         btnUpdate.setBounds(500, 90, 110, 25);
         btnUpdate.setActionCommand(ACT_UPDATE);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgProduct.add(btnUpdate);
         
         btnDelete=new JButton("Delete");
         btnDelete.setBounds(500, 130, 110, 25);
         btnDelete.setActionCommand(ACT_DELETE);
         btnDelete.addActionListener(this);
-        //btnDelete.setEnabled(false);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgProduct.add(btnDelete);
         
         btnClose=new JButton("Back");
         btnClose.setBounds(500, 170, 110, 25);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
-        dlgProduct.add(btnClose);
-        
-//        btnView=new JButton("View");
-//        btnView.setBounds(500, 220, 110, 25);
-//        btnView.setActionCommand(ACT_VIEW);
-//        btnView.addActionListener(this);
-//        dlgProduct.add(btnView);
-//        
-//        lbl_title2=new JLabel();
-//        lbl_title2.setBounds(10, 220, 120, 25);         
-//        lbl_title2.setText("Available Products: ");        
-//        dlgProduct.add(lbl_title2); 
-//        
-//        lbl_search=new JLabel();
-//        lbl_search.setBounds(150, 220, 250, 25);         
-//        lbl_search.setText("[Quick Search (Enter product Code/Name):]"); 
-//        
-//        dlgProduct.add(lbl_search); 
-        
-//        txt_search=new JTextField();
-//        txt_search.setBounds(400, 220, 85, 25);         
-//        txt_search.setText(""); 
-//        txt_search.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void changedUpdate(DocumentEvent e) 
-//            {
-//                doSearch();
-//            }
-//            
-//            @Override
-//            public void removeUpdate(DocumentEvent e) 
-//            {
-//                doSearch();
-//            }
-//            
-//            @Override
-//            public void insertUpdate(DocumentEvent e) 
-//            {
-//                doSearch();
-//            }
-//            
-//            public void doSearch() 
-//            {
-//                if (txt_search.getText().length()>=3)
-//                {
-////                    //Call the search method
-//                    productListTable.insertRow(txt_search.getText());
-//                }
-//            }
-//           
-//        });
-//        dlgProduct.add(txt_search);
-//        
-//        //Category List Table
-//        productListTable=new ProductListTable();
-//        productListTable.setBounds(40,250,550, 550);
-//        dlgProduct.add(productListTable);
-//        productListTable.insertRow();        
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        dlgProduct.add(btnClose);       
        
     }
     

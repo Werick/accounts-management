@@ -29,6 +29,8 @@ public class CustomerDAO {
     {
         //Sql=new Sql();
     }
+    
+    
     public void saveCustomer(Customer customer) throws SQLException
     {      
         

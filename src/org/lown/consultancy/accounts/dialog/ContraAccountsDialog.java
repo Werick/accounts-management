@@ -20,7 +20,6 @@ import javax.swing.border.TitledBorder;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.ContraAccount;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
-import org.lown.consultancy.accounts.tables.CategoryListTable;
 import org.lown.consultancy.accounts.tables.ContraAccountTable;
 
 /**

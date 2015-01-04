@@ -154,19 +154,14 @@ public class InvoicePrinter {
                 
                 cell=curRow.createCell(6);
                 cell.setCellStyle(style3);
-                cell.setCellValue("Kes "+df.format(salesTx.getTxSalesAmount()));
-                
-                
-//                while (rowIterator.hasNext()) 
-//                {
-//                    Row row = rowIterator.next();
-//                    //
-//                }
+                cell.setCellValue("Kes "+df.format(salesTx.getTxSalesAmount()));            
+
                 invoicefile=workingDir + "\\Invoice\\" +salesTx.getCustomer().getCustomerNumber()+"_"+invoicefile+"_"+datef.format(salesTx.getTxSalesDate())+"_"+salesTx.getTx_summary_id()+".xls";
-                 // Write the output to a file
+            
+                // Write the output to a file
             //Save the Changes
             //generate new file and save
-                sheet.protectSheet("password");
+            sheet.protectSheet("password");
             FileOutputStream fileOut = new FileOutputStream(invoicefile);
             workbook.write(fileOut);
             fileOut.close();

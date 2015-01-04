@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -198,7 +199,8 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         btnCreate.setBounds(395, 40, 135, 25); 
         btnCreate.setActionCommand(ACT_CREATE);
         btnCreate.addActionListener(this);  
-        btnCreate.setToolTipText("Click to Create/Add a new supplier/company.");
+        btnCreate.setToolTipText("Click to Create/Add a new supplier/company.");           
+        btnCreate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pFind_Create.add(btnCreate);
        
         lbl_Search=new JLabel();
@@ -380,6 +382,8 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         btnEdit.setBounds(260, 20, 60, 25);
         btnEdit.setActionCommand(ACT_EDIT);
         btnEdit.addActionListener(this);
+        btnEdit.setToolTipText("Click to Edit/Update Supplier/company info");       
+        btnEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pSupplier.add(btnEdit);
         
              
@@ -387,25 +391,32 @@ public class SupplierDashboard extends JPanel implements ActionListener{
         btnPurchase.setBounds(10, 450, 200, 50);
         btnPurchase.setActionCommand(ACT_NEW);
         btnPurchase.addActionListener(this);
+        btnPurchase.setToolTipText("Click to add New Purchases");       
+        btnPurchase.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgsupplierDashboard.add(btnPurchase);
         
         btnUpdate=new JButton("Pay Supplier");
         btnUpdate.setBounds(300, 450, 200, 50);
         btnUpdate.setActionCommand(ACT_PAY);
         btnUpdate.addActionListener(this);
+        btnUpdate.setToolTipText("Click to Make Payments to the selected Supplier/Company");       
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgsupplierDashboard.add(btnUpdate);
         
         btnStatement=new JButton("Print Statement");
         btnStatement.setBounds(10, 550, 200, 50);
         btnStatement.setActionCommand(ACT_DELETE);
         btnStatement.addActionListener(this);
-        //btnStatement.setEnabled(false);
+        btnStatement.setToolTipText("Click to View the Statement of Account for the selected Customer/Company");       
+        btnStatement.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgsupplierDashboard.add(btnStatement);
         
         btnClose=new JButton("Close");
         btnClose.setBounds(300, 550, 200, 50);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setToolTipText("Click to go back to the Home/Main Menu Window");       
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgsupplierDashboard.add(btnClose);
 
         

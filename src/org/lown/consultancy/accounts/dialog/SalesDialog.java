@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -515,18 +516,21 @@ public class SalesDialog extends JPanel implements ActionListener{
         btnPostTx.setBounds(750, 400, 150, 45);  //615
         btnPostTx.setActionCommand(ACT_SAVE);
         btnPostTx.addActionListener(this);
+        btnPostTx.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTransaction.add(btnPostTx);
         
         btnPrintInvoice=new JButton("Cancel Transaction");
         btnPrintInvoice.setBounds(750, 460, 150, 45); //645
         btnPrintInvoice.setActionCommand(ACT_PRINT);
         btnPrintInvoice.addActionListener(this);
+        btnPrintInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTransaction.add(btnPrintInvoice);
         
         btnBack=new JButton("Close");
         btnBack.setBounds(750, 520, 150, 45); //675
         btnBack.setActionCommand(ACT_BACK);
         btnBack.addActionListener(this);
+        btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgTransaction.add(btnBack);
         
         

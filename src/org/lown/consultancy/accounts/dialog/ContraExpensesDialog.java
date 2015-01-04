@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -199,12 +200,14 @@ public class ContraExpensesDialog extends JPanel implements ActionListener{
         btnAdd.setBounds(570, 90, 100, 25);
         btnAdd.setActionCommand(ACT_SAVE);
         btnAdd.addActionListener(this);
+        btnAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pNewExpense.add(btnAdd);
         
         btnUpdate=new JButton("Drop Item");
         btnUpdate.setBounds(570, 40, 100, 25);
         btnUpdate.setActionCommand(ACT_UPDATE);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pExpenses.add(btnUpdate); 
         
          //Contra Expenses List Table
@@ -224,24 +227,28 @@ public class ContraExpensesDialog extends JPanel implements ActionListener{
         btnSave.setBounds(570, 100, 100, 40);
         btnSave.setActionCommand(ACT_POST);
         btnSave.addActionListener(this);
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pExpenses.add(btnSave); 
         
         btnView=new JButton("View");
         btnView.setBounds(570, 150, 100, 40);
         btnView.setActionCommand(ACT_VIEW);
         btnView.addActionListener(this);
+        btnView.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pExpenses.add(btnView); 
         
         btnClose=new JButton("Close");
         btnClose.setBounds(570, 200, 100, 40);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pExpenses.add(btnClose); 
         
         btnHide=new JButton("Hide");
         btnHide.setBounds(570, 200, 100, 40);
         btnHide.setActionCommand(ACT_HIDE);
         btnHide.addActionListener(this);
+        btnHide.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pExpensesList.add(btnHide);
         
         lbl_total=new JLabel();

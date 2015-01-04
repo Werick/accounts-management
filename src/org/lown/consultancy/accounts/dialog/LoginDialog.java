@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,13 +94,14 @@ public class LoginDialog extends JPanel implements ActionListener{
         btnLogin.setActionCommand(ACT_LOGIN);
         btnLogin.addActionListener(this);
         btnLogin.setToolTipText("Click to Access the Company Center.");
-       // btnSave.setEnabled(false);
+        btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgLoginForm.add(btnLogin);
         
         btnBack=new JButton("Cancel");
         btnBack.setBounds(200, 160, 100, 40);
         btnBack.setActionCommand(ACT_BACK);
         btnBack.addActionListener(this);
+        btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnBack.setToolTipText("Click to Exit.");
         
         dlgLoginForm.getRootPane().setDefaultButton(btnLogin); //sent login button as the default button

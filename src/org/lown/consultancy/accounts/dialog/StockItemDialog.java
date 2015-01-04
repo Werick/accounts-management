@@ -99,6 +99,10 @@ public class StockItemDialog extends JPanel implements ActionListener{
 //                    //Call the search method
                     stockListTable.insertRow(txt_search.getText());
                 }
+                else if (txt_search.getText().length()==0)
+                {
+                    stockListTable.insertRows();
+                }
             }
            
         });

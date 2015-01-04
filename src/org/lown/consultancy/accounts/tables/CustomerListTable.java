@@ -145,6 +145,9 @@ public class CustomerListTable extends JPanel{
                                         CustomerDashboard.txt_balance.setText("("+CustomerDashboard.df.format(balance)+")");  
                                     }
                                     CustomerDashboard.txt_lastPayment.setText(CustomerDashboard.df.format(lastPayment));
+                                    System.out.println("Total Sales: "+totalSales);
+                                    System.out.println("Total Cash: "+totalCash);
+                                    System.out.println("Balance: "+balance);
                                 }
                                 else
                                 {

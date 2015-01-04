@@ -39,6 +39,81 @@ public class SalesDAO {
        //Sql=new Sql();
     }
     
+    /*
+     * Get the number of invoices that are yet to be paid
+     * @Param String search
+     */
+    public int getPendingInvoices()
+    {
+        int c=0;
+        
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting the Number of Pending Invoices (Unpaid Invoices)... ");
+            
+
+            String sqlStmt="SELECT count(*)as total FROM transactionsummary t ";
+            sqlStmt+="where paid=0 and voided=0; ";            
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+               c=rs.getInt("total")   ;                          
+            }            
+            
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return  c;
+    }
+    
+    /*
+     * Get the number of invoices that are overdue for payment
+     * @Param String search
+     */
+    public int getOverDueInvoices()
+    {
+        int c=0;
+        
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting the Number of Ovedue Invoices (Unpaid Invoices and the due date less than the curren tdate)... ");
+            
+            
+
+            String sqlStmt="SELECT count(*) as total FROM transactionsummary t ";
+            sqlStmt+="where paid=0 and voided=0 and txduedate<curdate(); ";
+           
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+               c=rs.getInt("total")   ;                          
+            }            
+            
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return  c;
+    }
+    
+    
     public Map<String, Integer> getSalesRepMap()
     {
         Map<String, Integer> salesRepMap=new HashMap<String,Integer>();

@@ -33,6 +33,80 @@ public class PurchasesDAO {
     {
         
     }
+    
+    public int getPendingSupplierInvoices()
+    {
+        int c=0;
+        
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting the Number of Pending Invoices (Unpaid Invoices)... ");
+            
+
+            String sqlStmt="select count(*) as total ";
+            sqlStmt+="from ( ";
+            sqlStmt+="SELECT supplier_id FROM purchases p ";     
+            sqlStmt+="where voided=0 and paid=0 ";   
+            sqlStmt+="group by invoicenum)x; ";   
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+               c=rs.getInt("total")   ;                          
+            }            
+            
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return  c;
+    }
+    
+    /*
+     * Get the number of invoices that are overdue for payment
+     * @Param String search
+     */
+    public int getOverDueSupplierInvoices()
+    {
+        int c=0;
+        
+        try
+        {
+            //log info
+            AccountsManagement.logger.info("Getting the Number of Ovedue Invoices (Unpaid Invoices and the due date less than the curren tdate)... ");
+            
+            String sqlStmt="select count(*) as total ";
+            sqlStmt+="from ( ";
+            sqlStmt+="SELECT supplier_id FROM purchases p ";     
+            sqlStmt+="where voided=0 and paid=0 and duedate<curdate() ";   
+            sqlStmt+="group by invoicenum)x; "; 
+           
+            ResultSet rs=Sql.executeQuery(sqlStmt);
+            while (rs.next())
+            {
+               c=rs.getInt("total")   ;                          
+            }            
+            
+        }
+        catch (SQLException e) 
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            //Logger.getLogger(Sql.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(null, e);
+            AccountsManagement.logger.log(Level.SEVERE, "ERROR", e);
+         }
+        
+        return  c;
+    }
+    
     public double getLastPaymentMade(Supplier supplier)
     {
         double amount=0.0;

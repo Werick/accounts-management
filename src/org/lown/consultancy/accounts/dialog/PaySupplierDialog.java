@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -317,6 +318,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
         btnPost.setBounds(670, 300, 150, 40);
         btnPost.setActionCommand(ACT_PAY);
         btnPost.addActionListener(this);
+        btnPost.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgPaySupplier.add(btnPost);
         
         
@@ -325,6 +327,7 @@ public class PaySupplierDialog extends JPanel implements ActionListener{
         btnClose.setBounds(670, 360, 150, 40);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgPaySupplier.add(btnClose);
         
         if(SupplierList.selectedSupplier!=null)

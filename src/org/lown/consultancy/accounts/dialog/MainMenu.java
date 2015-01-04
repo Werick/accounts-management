@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +20,8 @@ import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.User;
 import org.lown.consultancy.accounts.dao.CompanyDAO;
 import org.lown.consultancy.accounts.dao.PDFWriter;
+import org.lown.consultancy.accounts.dao.PurchasesDAO;
+import org.lown.consultancy.accounts.dao.SalesDAO;
 import org.lown.consultancy.accounts.dao.StockDAO;
 
 /**
@@ -58,7 +61,9 @@ public class MainMenu extends JFrame implements ActionListener{
     private JLabel txt_User;
     public static User gUser;
     public static CompanyDAO cs;
-    public static StockDAO ss;
+    public static StockDAO stockDAO;
+    public static PurchasesDAO purchases;
+    public static SalesDAO sales;
     public static Map companyDetails;
     
     private JLabel lbl_creditorInvoice;
@@ -76,7 +81,9 @@ public class MainMenu extends JFrame implements ActionListener{
     {
         gUser=user;
         cs=new CompanyDAO();
-        ss=new StockDAO();
+        stockDAO=new StockDAO();
+        sales=new SalesDAO();
+        purchases=new PurchasesDAO();
         companyDetails=cs.getCompanyDetails();
         /*
          * Will prefer to user Global properties for some standard stuff
@@ -123,32 +130,37 @@ public class MainMenu extends JFrame implements ActionListener{
         //quick shortcut links
         lbl_creditorInvoice=new JLabel();
         lbl_creditorInvoice.setBounds(20, 50, 300, 25);         
-        lbl_creditorInvoice.setText("Overdue Supplier Invoices");
+        lbl_creditorInvoice.setText("Overdue Supplier Invoices: ("+purchases.getOverDueSupplierInvoices()+")");
         lbl_creditorInvoice.setFont(title2Font);
+        lbl_creditorInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pQuickLinks.add( lbl_creditorInvoice);
         
         lbl_creditorPendingInvoice=new JLabel();
         lbl_creditorPendingInvoice.setBounds(20, 100, 300, 25);         
-        lbl_creditorPendingInvoice.setText("Pending Supplier Invoices");
+        lbl_creditorPendingInvoice.setText("Pending Supplier Invoices: ("+purchases.getPendingSupplierInvoices()+")");
         lbl_creditorPendingInvoice.setFont(title2Font);
+        lbl_creditorPendingInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pQuickLinks.add( lbl_creditorPendingInvoice);
         
         lbl_debtorInvoice=new JLabel();
         lbl_debtorInvoice.setBounds(20, 150, 300, 25);         
-        lbl_debtorInvoice.setText("Overdue Debtor/Customer Invoices");
+        lbl_debtorInvoice.setText("Overdue Debtor/Customer Invoices: ("+sales.getOverDueInvoices()+")");
         lbl_debtorInvoice.setFont(title2Font);
+        lbl_debtorInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pQuickLinks.add(lbl_debtorInvoice);
         
         lbl_debtorPendingInvoice=new JLabel();
         lbl_debtorPendingInvoice.setBounds(20, 200, 300, 25);         
-        lbl_debtorPendingInvoice.setText("Pending Debtor/Customer Invoices");
+        lbl_debtorPendingInvoice.setText("Pending Debtor/Customer Invoices: ("+sales.getPendingInvoices()+")");
         lbl_debtorPendingInvoice.setFont(title2Font);
+        lbl_debtorPendingInvoice.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pQuickLinks.add( lbl_debtorPendingInvoice);
         
         lbl_stock=new JLabel();
         lbl_stock.setBounds(20, 250, 300, 25);         
-        lbl_stock.setText("Stock Items Due for Ordering: ("+ss.getPendingStockItems()+")");
+        lbl_stock.setText("Stock Items Due for Ordering: ("+stockDAO.getPendingStockItems()+")");
         lbl_stock.setFont(title2Font);
+        lbl_stock.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pQuickLinks.add(lbl_stock);
         
         
@@ -187,6 +199,7 @@ public class MainMenu extends JFrame implements ActionListener{
        btnCustomer.setActionCommand(ACT_CUSTOMER);
        btnCustomer.addActionListener(this);
        btnCustomer.setToolTipText("Create, Find, Edit Customers and Carry out all customer transactions");
+       btnCustomer.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnCustomer);
          
          
@@ -195,12 +208,14 @@ public class MainMenu extends JFrame implements ActionListener{
        btnProduct.setActionCommand(ACT_PRODUCT);
        btnProduct.addActionListener(this);
        btnProduct.setToolTipText("Manage Prouct and Product Categories");
+       btnProduct.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnProduct);         
        
        btnSupplier=new JButton("Manage Suppliers");
        btnSupplier.setBounds(50, 170, 200, 60);
        btnSupplier.setActionCommand(ACT_SUPPLIER);
        btnSupplier.addActionListener(this);
+       btnSupplier.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnSupplier);
          
        btnStock=new JButton("Manage Stock");
@@ -208,24 +223,28 @@ public class MainMenu extends JFrame implements ActionListener{
        btnStock.setActionCommand(ACT_STOCK);
        btnStock.addActionListener(this);
        btnStock.setToolTipText("Manage Stock Prices and Quantities");
+       btnStock.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnStock);
        
        btnReport=new JButton("Manage Reports");
        btnReport.setBounds(50, 310, 200, 60);
        btnReport.setActionCommand(ACT_REPORT);
        btnReport.addActionListener(this);
+       btnReport.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add( btnReport);
        
        btnUser=new JButton("User Management");
        btnUser.setBounds(50, 380, 200, 60);
        btnUser.setActionCommand(ACT_USER);
        btnUser.addActionListener(this);
+       btnUser.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add( btnUser);
          
        btnTreasury=new JButton("Manage Treasury");
        btnTreasury.setBounds(50, 450, 200, 60);
        btnTreasury.setActionCommand(ACT_TREASURY);
        btnTreasury.addActionListener(this);
+       btnTreasury.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add( btnTreasury);
          
        btnGlobalProperty=new JButton("Manage Global Properties");
@@ -233,6 +252,7 @@ public class MainMenu extends JFrame implements ActionListener{
        btnGlobalProperty.setActionCommand(ACT_GLOBALPROPERTIES);
        btnGlobalProperty.addActionListener(this);
        btnGlobalProperty.setToolTipText("Manage Application's Global Properties");
+       btnGlobalProperty.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnGlobalProperty);
        
        
@@ -240,6 +260,8 @@ public class MainMenu extends JFrame implements ActionListener{
        btnExit.setBounds(50, 590, 200, 60);
        btnExit.setActionCommand(ACT_EXIT);
        btnExit.addActionListener(this);
+       btnExit.setToolTipText("Exit/Close/Shut down Application");
+       btnExit.setCursor(new Cursor(Cursor.HAND_CURSOR));
        pMenu.add(btnExit);
        
        
@@ -274,8 +296,9 @@ public class MainMenu extends JFrame implements ActionListener{
 	}
         else if(e.getActionCommand().equals(ACT_GLOBALPROPERTIES))
         {
-            AccountsManagement.logger.info("Loading global properties form form... ");            
-            PDFWriter pdfWriter=new PDFWriter(); 
+            AccountsManagement.logger.info("Loading global properties Dialog... ");            
+            //PDFWriter pdfWriter=new PDFWriter(); 
+            GPDialog.createAndShowGUI(); 
             return;
 	}
         else if(e.getActionCommand().equals(ACT_TREASURY))

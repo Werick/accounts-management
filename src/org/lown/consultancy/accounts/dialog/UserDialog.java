@@ -4,6 +4,7 @@
  */
 package org.lown.consultancy.accounts.dialog;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -120,24 +121,28 @@ public class UserDialog extends JPanel implements ActionListener{
         btnSave.setBounds(450, 20, 100, 30);
         btnSave.setActionCommand(ACT_SAVE);
         btnSave.addActionListener(this);
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgUsers.add(btnSave); 
         
         btnUpdate=new JButton("Update");
         btnUpdate.setBounds(600, 20, 100, 30);
         btnUpdate.setActionCommand(ACT_UPDATE);
         btnUpdate.addActionListener(this);
+        btnUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgUsers.add(btnUpdate); 
         
         btnDelete=new JButton("Delete");
         btnDelete.setBounds(450, 70, 100, 30);
         btnDelete.setActionCommand(ACT_BACK);
         btnDelete.addActionListener(this);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgUsers.add(btnDelete);
         
         btnClose=new JButton("Close");
         btnClose.setBounds(600, 70, 100, 30);
         btnClose.setActionCommand(ACT_BACK);
         btnClose.addActionListener(this);
+        btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
         dlgUsers.add(btnClose); 
         
         lbl_sirName=new JLabel();

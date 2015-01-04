@@ -19,6 +19,7 @@ import javax.swing.table.TableColumn;
 import org.lown.consultancy.accounts.AccountsManagement;
 import org.lown.consultancy.accounts.Category;
 import org.lown.consultancy.accounts.dao.CategoryDAO;
+import org.lown.consultancy.accounts.dialog.ProductDashboard;
 
 /**
  *
@@ -30,15 +31,16 @@ public class CategoryListTable extends JPanel {
     private String[] columnTitle=new String[]{"Category_id","Code","Name"};
     private static DefaultTableModel model ;
     private Object[][] data;   
-    private CategoryDAO productCategoryService;
+    private CategoryDAO categoryDAO;
     private List<Category> categoryList;
     
+    public static Category selectedCategory;
     public CategoryListTable()
     {
         AccountsManagement.logger.info("Creating Product Category List Table UI...");
         
-        productCategoryService=new CategoryDAO();
-        categoryList=productCategoryService.getAllCategories();
+        categoryDAO=new CategoryDAO();
+        categoryList=categoryDAO.getAllCategories();
         model = new DefaultTableModel(data,columnTitle);
         jTable = new JTable(model){
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -54,7 +56,7 @@ public class CategoryListTable extends JPanel {
         jTable.setFillsViewportHeight(true);
         JTableHeader header = jTable.getTableHeader();
         getSelectedRow();
-        setPreferredSize(new Dimension(400, 200));       
+        setPreferredSize(new Dimension(400, 150));       
         jTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
         
         //set coulmun size
@@ -121,7 +123,12 @@ public class CategoryListTable extends JPanel {
                             System.out.println(String.format("Selected Row in view: %d. " + "Selected Row in model: %d.", selectedRow, modelRow));
                             System.out.println(String.format("Selected Row in view:  " + data.toString()));
                             
-                            //selectedCustomer=cs.getCustomerByNumber(data.toString());            
+                            selectedCategory=categoryDAO.getCategoryById(Integer.parseInt(data.toString())); 
+                            if(selectedCategory!=null) 
+                            {
+                                ProductDashboard.txt_categoryCode.setText(selectedCategory.getCategoryCode());
+                                ProductDashboard.txt_categoryName.setText(selectedCategory.getCategoryName());
+                            }
                             
                        }
                    }
